@@ -26,7 +26,7 @@ public class FixedPuzzle : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.name == "puzzle")
+        if (collision.gameObject.name == "dd")
         {
             Vector2 xy = collision.gameObject.transform.position;
             int x = (int)xy.x;

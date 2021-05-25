@@ -11,12 +11,10 @@ public class ChangeZeroGravity : MonoBehaviour
     void Start()
     {
         rigid = GetComponent<Rigidbody>();
+        StartCoroutine(ResetGravity());
     }
 
     // Update is called once per frame
-    void Update()
-    {
-    }
 
     private void OnTriggerStay(Collider other)
     {
@@ -28,7 +26,7 @@ public class ChangeZeroGravity : MonoBehaviour
             if (dist <= 30)
             {
                 dir = transform.forward + transform.right;
-                rigid.AddForce(dir * 0.01f, ForceMode.Impulse);
+                rigid.AddForce(dir * 0.005f, ForceMode.Impulse);
             }
             else
             {
@@ -36,5 +34,11 @@ public class ChangeZeroGravity : MonoBehaviour
                 rigid.AddForce(-dir * 0.01f, ForceMode.Impulse);
             }
         }
+    }
+
+    IEnumerator ResetGravity()
+    {
+        yield return new WaitForSeconds(1);
+        rigid.useGravity = false;
     }
 }
