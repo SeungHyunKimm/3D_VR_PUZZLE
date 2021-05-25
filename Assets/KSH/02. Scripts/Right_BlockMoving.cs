@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Right_BlockMoving : MonoBehaviour
 {
+    Transform catchObj;
+    public float throwPower = 3;
+
     void Start()
     {
 
@@ -13,6 +16,12 @@ public class Right_BlockMoving : MonoBehaviour
     }
 
     void Update()
+    {
+        CatchObj();
+        DropObj();
+    }
+
+    void CatchObj()
     {
         if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
         {
@@ -29,4 +38,23 @@ public class Right_BlockMoving : MonoBehaviour
             }
         }
     }
+
+    void DropObj()
+    {
+        if (catchObj == null) return;
+        if(OVRInput.GetUp(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+        {
+            catchObj.SetParent(null);
+            catchObj.GetComponent<Rigidbody>().isKinematic = false;
+            ThrowObj();
+            catchObj = null;
+        }
+    }
+
+    void ThrowObj()
+    {
+        Rigidbody rb = catchObj.GetComponent<Rigidbody>();
+        rb.velocity = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch) * throwPower;
+    }
+
 }
