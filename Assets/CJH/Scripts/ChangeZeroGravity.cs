@@ -5,6 +5,8 @@ using UnityEngine;
 public class ChangeZeroGravity : MonoBehaviour
 {
     Rigidbody rigid;
+    Vector3 dir;
+    float dist;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,18 +22,19 @@ public class ChangeZeroGravity : MonoBehaviour
     {
         if (other.gameObject.name == "Sphere")
         {
-            float dist = Vector3.Distance(transform.position, other.transform.position);
+            dist = Vector3.Distance(transform.position, other.transform.position);
             transform.forward = other.transform.position - transform.position;
+            
             if (dist <= 30)
             {
-                rigid.AddForce(other.transform.forward * 0.01f, ForceMode.Impulse);
+                dir = transform.forward + transform.right;
+                rigid.AddForce(dir * 0.01f, ForceMode.Impulse);
             }
             else
             {
-                Vector3 dir = other.transform.position - transform.position;
-                rigid.AddForce(dir * 0.01f, ForceMode.Impulse);
+                dir = transform.position - other.transform.position;
+                rigid.AddForce(-dir * 0.01f, ForceMode.Impulse);
             }
-
         }
     }
 }
