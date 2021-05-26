@@ -7,26 +7,38 @@ public class CanvasManager : MonoBehaviour
     public static int height = 24;
     public static int width = 10;
     private static Transform[,] grid = new Transform[width, height];
-    float currtime, checktime = 3;
-    int k = 0;
+    Rigidbody rigid;
+    Material mat;
+    int k;
+    float albedo;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        mat = GetComponent<MeshRenderer>().material;
+        k = 1;
     }
 
-    
-
-    private void OnCollisionEnter(Collision collision)
+    private void Update()
     {
-        //if (collision.gameObject.name == "Puzzle")
-        //{
-        //    Vector2 xy = collision.gameObject.transform.position;
-        //    int x = (int)xy.x;
-        //    int y = (int)xy.y;
+        SetAlbedo();
+    }
 
-        //    collision.gameObject.transform.position = new Vector2(x, y);
-        //}
+    void SetAlbedo()                                         //캔버스의 명암 조절
+    {
+         
+        if (mat.color.a >= 1 || mat.color.a <= 0)
+            k *= -1;
+
+        albedo += 0.001f * k;
+
+        mat.color = new Color(0.5f, 0.5f, 0.5f, albedo);         
+    }
+
+    private void OnCollisionEnter(Collision collision)        //퍼즐이 캔버스에 끼워졌을 때 물리 작용 제거
+    {
+        rigid = collision.transform.GetComponent<Rigidbody>();
+        rigid.isKinematic = true;
     }
 
     void AddtoGrid()
