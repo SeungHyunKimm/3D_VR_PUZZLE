@@ -8,10 +8,13 @@ public class Right_BlockMoving : MonoBehaviour
     public float throwPower = 3;
     RaycastHit hit;
     Rigidbody rigid;
-
+    LineRenderer lr;
     void Start()
     {
 
+
+
+        lr = GetComponent<LineRenderer>();
 
 
 
@@ -19,8 +22,25 @@ public class Right_BlockMoving : MonoBehaviour
 
     void Update()
     {
+        DrawGuideLine();
         CatchObj();
         DropObj();
+    }
+
+    void DrawGuideLine()
+    {
+        Ray ray = new Ray(transform.position, transform.forward);
+        RaycastHit hit;
+        if(Physics.Raycast(ray, out hit))
+        {
+            lr.SetPosition(0, transform.position);
+            lr.SetPosition(1, hit.point);
+        }
+        else
+        {
+            lr.SetPosition(0, transform.position);
+            lr.SetPosition(1, transform.position + transform.forward * 1);
+        }
     }
 
     void CatchObj()
