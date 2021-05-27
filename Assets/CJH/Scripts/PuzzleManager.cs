@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class PuzzleManager : MonoBehaviour
 {
-    public static PuzzleManager instance;
     Transform center;         //공전 중심 위치
     Rigidbody rigid;          //퍼즐의 물리 컴포넌트
     Vector3 dir;              //공전 방향 설정
     float dist;               //캔버스 중심축과의 거리
     float [] xyz;             //물체의 각도 값
     int[] rotspeed;           //회전 속도
-
+    public int puzzleIndex;   //퍼즐 인덱스
+    GameManager gm;           //프리뷰 인덱스 가져오기
+ 
     public enum PuzzleState
     {
         Revolution,           //공전 상태
@@ -20,11 +21,6 @@ public class PuzzleManager : MonoBehaviour
 
     public PuzzleState state;
     // Start is called before the first frame update
-
-    private void Awake()
-    {
-        instance = this;
-    }
     void Start()
     {
         xyz = new float[3];
@@ -33,11 +29,14 @@ public class PuzzleManager : MonoBehaviour
         StartCoroutine(ResetGravity());
         GameObject canvasGo = GameObject.Find("Center");
         center = canvasGo.GetComponent<Transform>();
+        GameObject gmGo = GameObject.Find("GameManager");
+        gm = gmGo.GetComponent<GameManager>();
     }
 
     // Update is called once per frame
     private void Update()
     {
+        CheckPreView();
         switch (state)
         {
             case PuzzleState.Revolution:
@@ -88,5 +87,26 @@ public class PuzzleManager : MonoBehaviour
                 rotspeed[i] = -1;
         }
         transform.Rotate(xyz[0] , xyz[1] , xyz[2]);
+    }
+
+    public void CheckPreView()
+    {
+        if (gm.preViewIndex != puzzleIndex)
+        {
+            state = PuzzleState.Revolution;
+            rigid.isKinematic = false;
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.transform.tag == "Quad")
+        {
+
+            Material mat = collision.transform.GetComponent<MeshRenderer>().material;
+            Material puMat = transform.GetComponent<MeshRenderer>().material;
+
+            mat.color = puMat.color;
+        }
     }
 }
