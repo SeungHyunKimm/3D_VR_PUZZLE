@@ -8,6 +8,8 @@ public class TouchRotate : MonoBehaviour
     void Start()
     {
         
+
+
     }
     void Update()
     {
@@ -48,7 +50,7 @@ public class TouchRotate : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
-            print("hit");
+            //print("hit");
             if (OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch))
             {
                 print("rotate complete");

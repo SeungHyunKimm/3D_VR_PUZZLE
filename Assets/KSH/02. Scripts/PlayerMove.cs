@@ -26,7 +26,5 @@ public class PlayerMove : MonoBehaviour
         Vector2 joystickR = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
         //y축으로 회전을 자유롭게 하고 싶다.
         transform.Rotate(0, joystickR.x * 3 * Time.deltaTime, 0);
-
-
     }
 }
