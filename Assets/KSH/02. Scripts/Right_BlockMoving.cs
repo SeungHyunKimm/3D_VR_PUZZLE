@@ -113,6 +113,7 @@ public class Right_BlockMoving : MonoBehaviour
 
             //콜리전 형태로 손 앞에 오게끔 설계하자
         }
+
         else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch))
         {
             PuzzleManager.instance.state = PuzzleManager.PuzzleState.Revolution;
@@ -143,7 +144,6 @@ public class Right_BlockMoving : MonoBehaviour
             rigid.AddForce(dir * 1, ForceMode.Impulse);
             preView[preViewIndex].SetActive(false);
         }
-
     }
 
     void DropObj()
@@ -163,7 +163,6 @@ public class Right_BlockMoving : MonoBehaviour
             ThrowObj();
             //잡은놈 저장한 것 초기화
             catchObj = null;
-
         }
     }
 
