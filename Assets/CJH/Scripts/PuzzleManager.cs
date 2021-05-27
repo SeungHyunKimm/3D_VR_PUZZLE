@@ -50,7 +50,6 @@ public class PuzzleManager : MonoBehaviour
                 break;
         }
 
-        print(transform.rotation.x);
     }
 
     IEnumerator ResetGravity()           //시작 1초 후 무중력 상태로 전환
