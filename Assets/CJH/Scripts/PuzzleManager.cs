@@ -6,12 +6,14 @@ public class PuzzleManager : MonoBehaviour
 {
     Transform center;         //공전 중심 위치
     Rigidbody rigid;          //퍼즐의 물리 컴포넌트
+    BoxCollider box;          //퍼즐의 박스 콜라이더
     Vector3 dir;              //공전 방향 설정
     float dist;               //캔버스 중심축과의 거리
     float [] xyz;             //물체의 각도 값
     int[] rotspeed;           //회전 속도
     public int puzzleIndex;   //퍼즐 인덱스
     GameManager gm;           //프리뷰 인덱스 가져오기
+    public bool rink;         //캔버스와의 연결 여부
  
     public enum PuzzleState
     {
@@ -26,6 +28,7 @@ public class PuzzleManager : MonoBehaviour
         xyz = new float[3];
         rotspeed = new int[3];
         rigid = GetComponent<Rigidbody>();
+        box = GetComponent<BoxCollider>();
         StartCoroutine(ResetGravity());
         GameObject canvasGo = GameObject.Find("Center");
         center = canvasGo.GetComponent<Transform>();
@@ -36,7 +39,8 @@ public class PuzzleManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        CheckPreView();
+        if(!rink)           //캔버스에 붙어있다면 다른 퍼즐을 잡아도 움직이지 않게 체크 
+        //CheckPreView();
         switch (state)
         {
             case PuzzleState.Revolution:
@@ -51,7 +55,7 @@ public class PuzzleManager : MonoBehaviour
 
     }
 
-    IEnumerator ResetGravity()           //시작 1초 후 무중력 상태로 전환
+    IEnumerator ResetGravity()           //시작 0.5 초 후 무중력 상태로 전환
     {
         yield return new WaitForSeconds(0.5f);
         rigid.useGravity = false;
@@ -84,7 +88,7 @@ public class PuzzleManager : MonoBehaviour
             if (xyz[i] <= 0.008f && xyz[i] >= -0.008f)
                 rotspeed[i] = 0;
             else
-                rotspeed[i] = -1;
+                rotspeed[i] = -3;
         }
         transform.Rotate(xyz[0] , xyz[1] , xyz[2]);
     }
@@ -95,18 +99,6 @@ public class PuzzleManager : MonoBehaviour
         {
             state = PuzzleState.Revolution;
             rigid.isKinematic = false;
-        }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if(collision.transform.tag == "Quad")
-        {
-
-            Material mat = collision.transform.GetComponent<MeshRenderer>().material;
-            Material puMat = transform.GetComponent<MeshRenderer>().material;
-
-            mat.color = puMat.color;
         }
     }
 }

@@ -9,33 +9,33 @@ public class CanvasManager : MonoBehaviour
     private static Transform[,] grid = new Transform[width, height];
     Rigidbody rigid;         //퍼즐에 끼워진 물체의 rigid 
     Material mat;            //캔버스 자체 색상
-    int k;
+    int plusMinus;           //캔버스 판 명암 플러스 마이너스
     float albedo;
-    public GameObject[] puzzle;//퍼즐들의 그리드 및 색상 참조용.
-    MeshRenderer [] quadMat; //시작 시 퍼즐의 위치에 맞는 색상 담기.
+    public GameObject[] puzzle; //퍼즐들의 그리드 및 색상 참조용.
     public GameObject [] quad;  //쿼드 활성 비활성 체크용.
+    public bool[] checkpuzz;    //퍼즐들이 원래 위치에 위치하고 있는지 알아내는 여부
+
 
     // Start is called before the first frame update
     void Start()
     {
-        quadMat = GetComponentsInChildren<MeshRenderer>();
         mat = GetComponent<MeshRenderer>().material;
-        k = 1;
+        plusMinus = 1;
         SetPuzzlePosition();
     }
 
     private void Update()
     {
-        SetAlbedo(mat);
+        //SetAlbedo(mat);
     }
 
     void SetAlbedo(Material mat)                                         //캔버스의 명암 조절
     {
          
         if (mat.color.a >= 1 || mat.color.a <= 0)
-            k *= -1;
+            plusMinus *= -1;
 
-        albedo += 0.001f * k;
+        albedo += 0.001f * plusMinus;
         float r = mat.color.r;
         float g = mat.color.g;
         float b = mat.color.b;
@@ -44,40 +44,107 @@ public class CanvasManager : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)        //퍼즐이 캔버스에 끼워졌을 때 물리 작용 제거
     {
-        rigid = collision.transform.GetComponent<Rigidbody>();
-        rigid.isKinematic = true;
+        PuzzleManager pr = collision.transform.GetComponent<PuzzleManager>();
+        if(pr.state == PuzzleManager.PuzzleState.Catch)
+        {
+          rigid = collision.transform.GetComponent<Rigidbody>();
+          rigid.isKinematic = true;
+          CheckBox(collision.gameObject);
+          print(GameClear());
+        }
+    }
+
+    bool CheckBox(GameObject puzzle)                                            //퍼즐을 붙였을 때 정답처리 여부
+    {
+        int index = GetIndex(puzzle);
+        for (int i = 0; i < puzzle.transform.childCount; i++)
+        {
+            int positionX = Mathf.RoundToInt(puzzle.transform.GetChild(i).position.x);
+            int positionY = Mathf.RoundToInt(puzzle.transform.GetChild(i).position.y);
+            if (positionX >= 0 && positionX < width && positionY >= 0 && positionY < height)
+            {
+                int positionindex = positionX + positionY * height;
+                Material gr = quad[positionindex].GetComponent<MeshRenderer>().material; //쿼드의 색상 변경
+                Material pz = puzzle.transform.GetComponent<MeshRenderer>().material;
+                if (gr.color != pz.color)               //색상이 틀리면 gameClear[index]를 false 로 전환
+                {
+                    checkpuzz[index] = false;
+                    return false;
+                }
+            }
+        }
+        checkpuzz[index] = true;                     //끼워진 퍼즐이 캔퍼스와 틀에서 위치와 같으면 true 체크
+        return true;
+    }
+
+    bool GameClear()
+    {
+        for(int i = 0; i< checkpuzz.Length; i++)
+        {
+            if (!checkpuzz[i])
+                return false;  
+        }
+        return true;
+    }
+
+    int GetIndex(GameObject puzz)
+    {
+        for(int i = 0; i<puzzle.Length; i++)
+        {
+            if (puzz == puzzle[i])
+                return i;
+        }
+        return puzzle.Length;
     }
 
     void SetPuzzlePosition()                                //11 * 11 판에 퍼즐의 좌표 지정하는 함수
     {
-        for(int k = 0; k < puzzle.Length; k++)
+        int k = 0;
+        while( k < puzzle.Length)
         {
-            int x = Random.Range(0, 11);
-            int y = Random.Range(0, 11);
-            if (grid[x, y]) continue;                  //x , y의 중복 제거
-            int index = x + (11 * y);                  //Canvas 의 자식 Quad들의 인덱스 접근
-            SetQuad(x, y, k, index);
+            int x = Random.Range(0, width);
+            int y = Random.Range(0, height);
+            int index = x + (height * y);                     //Canvas 의 자식 Quad들의 인덱스 접근
+            if (CheckGrid(k , index)) continue;           //퍼즐들의 위치 중복 제거
+            //if (grid[x, y]) continue;                   //중복 위치 가능
+            SetQuadColor(x, y, k, index);
+            k++;
         }
     }
 
-    void SetQuad(int x , int y , int k , int index)               //캔버스 판에 퍼즐틀 맞추기
+   bool CheckGrid(int k , int index)                              //퍼즐들의 위치 중복 제거
+    {
+        puzzle[k].transform.position = quad[index].transform.position;
+        for (int i = 0; i < puzzle[k].transform.childCount; i++)
+        {
+            int positionX = Mathf.RoundToInt(puzzle[k].transform.GetChild(i).position.x);
+            int positionY = Mathf.RoundToInt(puzzle[k].transform.GetChild(i).position.y);
+            if (positionX >= 0 && positionX < width && positionY >= 0 && positionY < height)
+            {
+                if (grid[positionX, positionY])     
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    void SetQuadColor(int x , int y , int k , int index)               //캔버스 판에 퍼즐틀 제작
     {
         quad[index].SetActive(true);
-        puzzle[k].transform.position = quad[index].transform.position;         //퍼즐을 쿼드 좌표에 위치 시키기.
+        puzzle[k].transform.position = quad[index].transform.position - new Vector3(0,0,4);         //퍼즐을 쿼드 좌표에 위치 시키기.
         for (int i = 0; i < puzzle[k].transform.childCount; i++)
         {
             int positionX = Mathf.RoundToInt(puzzle[k].transform.GetChild(i).position.x);
             int positionY = Mathf.RoundToInt(puzzle[k].transform.GetChild(i).position.y);
             if(positionX >= 0 && positionX < width && positionY >= 0 && positionY < height)
             {
-              int positionindex = positionX + (11 * positionY);                      //쿼드와 퍼즐이 겹치는 부분을 재조정
+              int positionindex = positionX + (height * positionY);                      //쿼드와 퍼즐이 겹치는 부분을 재조정
               quad[positionindex].SetActive(true);
               grid[positionX, positionY] = puzzle[k].transform.GetChild(i);
-              Material gr = quad[positionindex].GetComponent<MeshRenderer>().material;
+              Material gr = quad[positionindex].GetComponent<MeshRenderer>().material; //쿼드의 색상 변경
               Material pz = puzzle[k].transform.GetComponent<MeshRenderer>().material;
               gr.color = pz.color;
             }
         }
-        puzzle[k].SetActive(false);
     }
 }
