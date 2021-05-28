@@ -91,7 +91,12 @@ public class PuzzleManager : MonoBehaviour
 
     public void CheckPreView()
     {
-        if (gm.preViewIndex != puzzleIndex)
+        //if (gm.preViewIndex != puzzleIndex)
+        //{
+        //    state = PuzzleState.Revolution;
+        //    rigid.isKinematic = false;
+        //}
+        if(Right_BlockMoving.instance.preViewIndex != puzzleIndex)
         {
             state = PuzzleState.Revolution;
             rigid.isKinematic = false;
