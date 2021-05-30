@@ -15,7 +15,8 @@ public class DragDrop : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
-
+            isClick = true;
+            selectedPiece = null;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
@@ -23,29 +24,30 @@ public class DragDrop : MonoBehaviour
             {
 
                 print(hit.transform.gameObject);
-
-
-                if (!hit.transform.GetComponent<PiecesScripts>().InRightPosition)
+                for (int i = 0; i < 37; i++)
                 {
-                    selectedPiece.transform.position = hit.transform.position;
-                    selectedPiece.GetComponent<PiecesScripts>().Selected = true;
+                    if (hit.transform.gameObject.name == ("Pieces_"+"(" + i + ")"))
+                    {
+                        print(hit.transform.gameObject.name);
+                        selectedPiece = hit.transform.gameObject;
+                    }
                 }
-
+                //마우스 우클릭을 했을때 
+                //클릭한 놈의 GameObject를 움직일 수 있게 하자
             }
-            //마우스 우클릭을 했을때 
-            //클릭한 놈의 GameObject를 움직일 수 있게 하자
-        }
-        if (Input.GetMouseButtonUp(1))
-        {
-            selectedPiece = null;
-            selectedPiece.GetComponent<PiecesScripts>().Selected = true;
-        }
+            //if (Input.GetMouseButtonUp(1))
+            //{
+            //    selectedPiece = null;
+            //    selectedPiece.GetComponent<PiecesScripts>().Selected = true;
+            //}
 
-        //if(selectedPiece == null)
-        //{
-        //    Vector3 mousePoint = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //    selectedPiece.transform.position = new Vector3(mousePoint.x, mousePoint.y, 0);
-        //}
+            //if (selectedPiece == null)
+            //{
+            //    Ray mousePoint = Camera.main.ScreenPointToRay(Input.mousePosition);
 
+            //    selectedPiece.transform.position = new Vector3(mousePoint.x, mousePoint.y, 0);
+            //}
+
+        }
     }
 }
