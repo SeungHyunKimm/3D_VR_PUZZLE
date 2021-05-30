@@ -46,7 +46,9 @@ public class TouchRotate : MonoBehaviour
 
     void LeftButtonOn()
     {
+        //VR 컨트롤러로 움직일 때
         //Ray ray = new Ray(transform.position, transform.forward);
+        //마우스로 움직일 때
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))

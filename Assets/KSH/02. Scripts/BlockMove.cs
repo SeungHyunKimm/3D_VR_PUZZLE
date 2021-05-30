@@ -64,7 +64,7 @@ public class BlockMove : MonoBehaviour
                 grid[x, y].transform.position = TempGrid;
                 
                 //정답 처리도 만들어보자(퍼즐을 원위치 시켰을 때)
-                
+                //각 색깔 10개마다 줄이 완성되면 정답 완성을 프린트 해보자.
             }
         }
     }
