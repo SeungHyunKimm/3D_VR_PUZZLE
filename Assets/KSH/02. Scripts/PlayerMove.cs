@@ -6,6 +6,7 @@ public class PlayerMove : MonoBehaviour
 {
     //플레이어 속도
     public float speed = 3;
+    public float rotateSpeed = 3;
     void Start()
     {
         
@@ -25,6 +26,6 @@ public class PlayerMove : MonoBehaviour
         //오른쪽 조이스틱으로 각도조절을 Vector2로 가져오자
         Vector2 joystickR = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
         //y축으로 회전을 자유롭게 하고 싶다.
-        transform.Rotate(0, joystickR.x * 3 * Time.deltaTime, 0);
+        transform.Rotate(0, joystickR.x * rotateSpeed * Time.deltaTime, 0);
     }
 }
