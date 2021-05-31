@@ -11,7 +11,7 @@ public class PiecesScripts : MonoBehaviour
     void Start()
     {
         rightposition = transform.position;
-        transform.position = new Vector3(Random.Range(18, 23), Random.Range(8, 0));
+        transform.position = new Vector3(Random.Range(11, 20), Random.Range(9, 1.5f));
     }
 
     // Update is called once per frame

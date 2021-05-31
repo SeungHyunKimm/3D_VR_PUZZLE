@@ -42,38 +42,12 @@ public class PictureMove : MonoBehaviour
     {
         for (int i = 0; i < Pics.Length; i++)
         {
-            if (Pictures_Angle[0].transform.eulerAngles == new Vector3(0, 0, 0))
+            if (Pictures_Angle[i].transform.eulerAngles == new Vector3(0, 0, 0))
             {
-                print("1번 정답 완료");
+                print(i + 1 + "번 정답 완료");
                 break;
-            }
-            if (Pictures_Angle[1].transform.eulerAngles == new Vector3(0, 0, 0))
-            {
-                print("2번 정답 완료");
-                break;
-            }
-            if (Pictures_Angle[2].transform.eulerAngles == new Vector3(0, 0, 0))
-            {
-                print("3번 정답 완료");
-                break;
-            }
-            if (Pictures_Angle[3].transform.eulerAngles == new Vector3(0, 0, 0))
-            {
-                print("4번 정답 완료");
-                break;
-            }
-            if (Pictures_Angle[4].transform.eulerAngles == new Vector3(0, 0, 0))
-            {
-                print("5번 정답 완료");
-                break;
-            }
-            if (Pictures_Angle[5].transform.eulerAngles == new Vector3(0, 0, 0))
-            {
-                print("6번 정답 완료");
-                break;
-            }
-            
 
+            }
         }
     }
 }

@@ -6,6 +6,9 @@ public class DragDrop : MonoBehaviour
 {
     public GameObject selectedPiece;
     bool isClick;
+    Ray ray;
+    RaycastHit hit;
+    
     void Start()
     {
 
@@ -17,8 +20,8 @@ public class DragDrop : MonoBehaviour
         {
             isClick = true;
             selectedPiece = null;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            
 
             if (Physics.Raycast(ray, out hit))
             {
@@ -26,7 +29,7 @@ public class DragDrop : MonoBehaviour
                 print(hit.transform.gameObject);
                 for (int i = 0; i < 37; i++)
                 {
-                    if (hit.transform.gameObject.name == ("Pieces_"+"(" + i + ")"))
+                    if (hit.transform.gameObject.name == ("Pieces_("+i+ ")"))
                     {
                         print(hit.transform.gameObject.name);
                         selectedPiece = hit.transform.gameObject;
@@ -35,19 +38,19 @@ public class DragDrop : MonoBehaviour
                 //마우스 우클릭을 했을때 
                 //클릭한 놈의 GameObject를 움직일 수 있게 하자
             }
-            //if (Input.GetMouseButtonUp(1))
-            //{
-            //    selectedPiece = null;
-            //    selectedPiece.GetComponent<PiecesScripts>().Selected = true;
-            //}
-
-            //if (selectedPiece == null)
-            //{
-            //    Ray mousePoint = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            //    selectedPiece.transform.position = new Vector3(mousePoint.x, mousePoint.y, 0);
-            //}
-
+            else if (Input.GetMouseButtonUp(1))
+            {
+                isClick = false;
+            }
+            if (isClick == true && selectedPiece != null)
+            {
+                ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                int layer = 1 << LayerMask.NameToLayer("Puzzle");
+                if(Physics.Raycast(ray, out hit))
+                {
+                    selectedPiece.transform.position = hit.point;
+                }
+            }
         }
     }
 }

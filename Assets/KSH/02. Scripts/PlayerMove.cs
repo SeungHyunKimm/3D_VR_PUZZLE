@@ -21,6 +21,7 @@ public class PlayerMove : MonoBehaviour
         //dir을 왼쪽 조이스틱 상하좌우의 움직임을 받게 하자
         Vector3 dir = transform.forward * joystickL.y + transform.right * joystickL.x;
         dir.Normalize();
+        dir.y = 0;
         //위치를 dir, speed, 시간에 따라 움직일 수 있게 하고 싶다.
         transform.position += dir * speed * Time.deltaTime;
         //오른쪽 조이스틱으로 각도조절을 Vector2로 가져오자
