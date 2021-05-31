@@ -106,7 +106,11 @@ public class PuzzleManager : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Puzzle"))
+        PuzzleManager pr = collision.transform.GetComponent<PuzzleManager>();
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Puzzle") && state != PuzzleState.Fixed)
+        {
+            if(pr.state != PuzzleState.Fixed)
             state = PuzzleState.Revolution;
+        }
     }
 }

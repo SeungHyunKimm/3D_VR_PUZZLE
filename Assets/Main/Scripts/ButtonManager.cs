@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class ButtonManager : MonoBehaviour
 {
     public static ButtonManager instance;
+    public GameObject settingUI;
     public enum ButtonState
     {
         Start,
@@ -25,7 +26,7 @@ public class ButtonManager : MonoBehaviour
 
     public void OnClickCancle()             //나가기
     {
-        gameObject.SetActive(false);
+        settingUI.SetActive(false);
     }
 
     public void OnClickRetry()            //재도전
