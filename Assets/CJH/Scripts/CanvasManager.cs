@@ -14,6 +14,7 @@ public class CanvasManager : MonoBehaviour
     public GameObject[] quad;   //쿼드 활성 비활성 체크용.
     public bool[] checkpuzz;    //퍼즐들이 원래 위치에 위치하고 있는지 알아내는 여부
     Material pz, qd;            //퍼즐과 쿼드의 Material
+    public GameObject blackHole;
 
 
     // Start is called before the first frame update
@@ -52,7 +53,7 @@ public class CanvasManager : MonoBehaviour
             CheckBox(collision.gameObject);
             if (GameClear())                                     //퍼즐을 다맞추었을 때 효과 발생 및 게임 종료
             {
-                print("Clear");
+                blackHole.SetActive(true);
             }
         }
     }
@@ -79,7 +80,7 @@ public class CanvasManager : MonoBehaviour
             }
         }
         checkpuzz[index] = true;                     //끼워진 퍼즐이 캔퍼스와 틀에서 위치와 같으면 true 체크
-        pz.SetColor("_EmissionColor", pz.color * 10);
+        //pz.SetColor("_EmissionColor", pz.color * 10);
     }
 
     bool GameClear()
