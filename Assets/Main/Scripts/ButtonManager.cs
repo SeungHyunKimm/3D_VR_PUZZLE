@@ -46,6 +46,7 @@ public class ButtonManager : MonoBehaviour
 
     public void OnClickStart()      //클릭시 스타트
     {
+
         SceneManager.LoadScene(1);
         
     }

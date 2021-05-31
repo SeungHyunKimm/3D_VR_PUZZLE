@@ -21,6 +21,8 @@ public class Right_Controller : MonoBehaviour
 
 
     GameObject SelectObj; // 선택한 놈 (승현)
+    //클릭한 상태
+    bool isClick;
 
     void Start()
     {
@@ -228,6 +230,8 @@ public class Right_Controller : MonoBehaviour
 
     void CatchObj()
     {
+        isClick = true;
+        SelectObj = null;
         //레이를 발사하여
         ray = new Ray(transform.position, transform.forward);
 
@@ -259,14 +263,24 @@ public class Right_Controller : MonoBehaviour
             if (Physics.Raycast(ray, out hit, 100, layer))
             {
                 print("isClick");
-                hit.transform.position = SelectObj.transform.position;
-                
+                SelectObj = hit.transform.gameObject;
             }
         }
         else if (v < 0)
         {
-            SelectObj = null;
+            isClick = false;
         }
+        if(isClick == true && SelectObj != null)
+        {
+            ray = new Ray(transform.position, transform.forward);
+            int layer = 1 << LayerMask.NameToLayer("Puzzle");
+            if(Physics.Raycast(ray, out hit, 100, layer))
+            {
+                SelectObj.transform.position = hit.point;
+                //hit.point = new Vector3(0, 0, 0);
+            }
+        }
+        //문제는 오래 쥐고 있을 수록 퍼즐조각이 앞으로 다가와진다.
 
         if (OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch))
         {
@@ -274,13 +288,10 @@ public class Right_Controller : MonoBehaviour
         }
         if (OVRInput.Get(OVRInput.Button.Two, OVRInput.Controller.RTouch))
         {
-            ray = new Ray(transform.position, transform.forward);
+
             
         }
-        else if (OVRInput.GetUp(OVRInput.Button.Two, OVRInput.Controller.RTouch))
-        {
-            
-        }
+
     }
 
     void DropObj()

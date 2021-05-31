@@ -139,6 +139,7 @@ public class Right_BlockMoving : MonoBehaviour
         }
         else if (OVRInput.GetUp(OVRInput.Button.Two, OVRInput.Controller.RTouch))
         {
+
             // PuzzleManager.instance.state = PuzzleManager.PuzzleState.Catch;
             pr.state = PuzzleManager.PuzzleState.Catch;
             rigid.isKinematic = false;                     //잡았을 때 true 상태이므로 전환 시켜줌.
@@ -146,6 +147,8 @@ public class Right_BlockMoving : MonoBehaviour
 
             rigid.AddForce(dir * 1, ForceMode.Impulse);
             preView[preViewIndex].SetActive(false);
+
+
         }
     }
 
