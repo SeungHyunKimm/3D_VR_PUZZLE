@@ -11,7 +11,7 @@ public enum RandomMoveCoordinates
   XYZ
 }
 
-public class ProjectileCollisionBehaviour : GameManager //Right_Controller
+public class ProjectileCollisionBehaviour : GameManager //Right_Controller , Right_Block_Moving
 {
   public float RandomMoveRadius;
   public float RandomMoveSpeed;
