@@ -19,6 +19,9 @@ public class Right_Controller : MonoBehaviour
     public GameObject pos;
     EffectSettings es;
 
+
+    GameObject SelectObj; // 선택한 놈 (승현)
+
     void Start()
     {
         lr = GetComponent<LineRenderer>();
@@ -31,7 +34,7 @@ public class Right_Controller : MonoBehaviour
         {
             case ButtonManager.ButtonState.Start:
             case ButtonManager.ButtonState.Select:
-                ModeB_RightController();
+                Start_Select_RightController();
                 break;
 
             case ButtonManager.ButtonState.Mode_A:
@@ -47,7 +50,7 @@ public class Right_Controller : MonoBehaviour
                 ModeD_RightController();
                 break;
         }
-        DrawGuideLine();
+
     }
 
     void ModeA_RightController()                             //A 모드 오른손 컨트롤러
@@ -58,15 +61,15 @@ public class Right_Controller : MonoBehaviour
         {
 
             PuzzleControl();
-
+            DrawGuideLine();
         }
     }
     void PuzzleControl()
     {
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B 버튼
-         if (ButtonManager.instance.settingUI.activeSelf && v > 0)
-         {
-            if(hit.transform.gameObject.name.Contains("Cancle"))
+        if (ButtonManager.instance.settingUI.activeSelf && v > 0)
+        {
+            if (hit.transform.gameObject.name.Contains("Cancle"))
             {
                 ButtonManager.instance.OnClickCancle();
             }
@@ -79,10 +82,10 @@ public class Right_Controller : MonoBehaviour
                 ButtonManager.instance.OnClickOther();
             }
             return;
-         }
+        } // 만약 메뉴창이 활성화되고 Trigger버튼을 누르고 있지 않으면
         if (v > 0)                        //클릭 또는 클릭 중
-              Shot();
-        
+            Shot();
+
         if (pr != null)                       //선택된 블록이 없을 시 값 참조에 오류 방지
         {
             if (OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch))  //A 버튼 클릭 중
@@ -116,28 +119,36 @@ public class Right_Controller : MonoBehaviour
                 preView[preViewIndex].SetActive(false);
                 pr = null;                           //프리 뷰 생성 금지
             }
-
         }
-        
     }
 
     void ModeB_RightController()            //B 모드 오른손 컨트롤러
     {
 
         DrawGuideLine();
-        OnClickButtonUI();
+        CatchObj();
 
     }
     void ModeC_RightController()            //C 모드 오른손 컨트롤러
     {
 
         DrawGuideLine();
+        CatchObj();
 
     }
     void ModeD_RightController()            //D 모드 오른손 컨트롤러
     {
 
         DrawGuideLine();
+        CatchObj();
+
+    }
+
+    void Start_Select_RightController()         // Start & Select Mode 오른손 컨트롤러
+    {
+
+        DrawGuideLine();
+        OnClickButtonUI();
 
     }
 
@@ -185,6 +196,9 @@ public class Right_Controller : MonoBehaviour
     {
         ray = new Ray(transform.position, transform.forward);
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B 버튼
+
+
+
         if (v > 0)
         {
             //int layer = 1 << LayerMask.NameToLayer("UI");
@@ -214,94 +228,58 @@ public class Right_Controller : MonoBehaviour
 
     void CatchObj()
     {
+        //레이를 발사하여
+        ray = new Ray(transform.position, transform.forward);
 
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
         //오른쪽 B버튼을 누르고 있으면
+
+        if (ButtonManager.instance.settingUI.activeSelf && v > 0)
+        {
+            if (hit.transform.gameObject.name.Contains("Cancle"))
+            {
+                ButtonManager.instance.OnClickCancle();
+            }
+            if (hit.transform.gameObject.name.Contains("Retry"))
+            {
+                ButtonManager.instance.OnClickRetry();
+            }
+            if (hit.transform.gameObject.name.Contains("Other"))
+            {
+                ButtonManager.instance.OnClickOther();
+            }
+            return;
+        }
+
+
         if (v > 0)
         {
-            //레이를 발사하여
-
-            Ray ray = new Ray(transform.position, transform.forward);
             int layer = 1 << LayerMask.NameToLayer("Puzzle");
             //부딪힌 놈의 레이어가 Puzzle이면
             if (Physics.Raycast(ray, out hit, 100, layer))
             {
-                for (int i = 0; i < preView.Length; i++)
-                {
-                    if (preView[i].name == hit.transform.gameObject.name) //프리뷰 인덱스 저장 및 Catch상태로 변환 
-                    {
-                        rigid = hit.transform.GetComponent<Rigidbody>();
-                        pr = hit.transform.GetComponent<PuzzleManager>();
-                        pr.state = PuzzleManager.PuzzleState.Catch;
-                        rigid.isKinematic = true;                        //물리 효과 적용 상태로 전환
-                        preViewIndex = i;
-                        break;
-                    }
-                }
+                print("isClick");
+                hit.transform.position = SelectObj.transform.position;
+                
             }
         }
-
+        else if (v < 0)
+        {
+            SelectObj = null;
+        }
 
         if (OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch))
         {
-            rigid.isKinematic = false;
-            Vector3 dir = transform.position - hit.transform.position;
-            rigid.AddForce(dir * 0.05f, ForceMode.Impulse);
-
-            print("부딪힘");
-            //catchObj에 부딪힌 놈의 위치를 담고
-            //catchObj = hit.transform;
-
-            #region 큐브가 천천히 손으로 날아오게끔 하자(실패)
-            //오른손과 큐브와의 거리를 구하자
-            //Vector3 dir =  transform.position - hit.transform.position;
-            //자연스럽게 손 안으로 올 수 있게끔 연출하자
-            //rigid.AddForce(dir * 0.2f, ForceMode.Impulse);
-            #endregion
-
-            //부딪힌 놈의 transform을 자기자신의 부모의 transform으로 담고
-            //hit.transform.SetParent(transform);
-            //리지드바디를 가져오자
-            // rigid = hit.transform.GetComponent<Rigidbody>();
-            //리지드바디 효과를 없애기 위해 isKinematic을 활성화하자
-            //rigid.isKinematic = true;
-            //손 앞에 놓는 효과를 두기 위해 인위적으로 z축의 위치를 조정하자
-            //hit.transform.position = transform.position + new Vector3(0, 0, 1);
-
-            //콜리전 형태로 손 앞에 오게끔 설계하자
+            
         }
-
-        //else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch))
-        //{
-        //    //PuzzleManager.instance.state = PuzzleManager.PuzzleState.Revolution;
-        //    //pr.state = PuzzleManager.PuzzleState.Revolution;
-        //}
-
-
         if (OVRInput.Get(OVRInput.Button.Two, OVRInput.Controller.RTouch))
         {
-            Ray ray = new Ray(transform.position, transform.forward);
-            int layer = 1 << LayerMask.NameToLayer("Canvas");
-            //부딪힌 놈의 레이어가 Puzzle이면
-            if (Physics.Raycast(ray, out hit, 100, layer))
-            {
-                preView[preViewIndex].SetActive(true);
-
-                int x = (int)hit.point.x;
-                int y = (int)hit.point.y;
-
-                preView[preViewIndex].transform.position = new Vector2(x, y);
-            }
+            ray = new Ray(transform.position, transform.forward);
+            
         }
         else if (OVRInput.GetUp(OVRInput.Button.Two, OVRInput.Controller.RTouch))
         {
-            // PuzzleManager.instance.state = PuzzleManager.PuzzleState.Catch;
-            pr.state = PuzzleManager.PuzzleState.Catch;
-            rigid.isKinematic = false;                     //잡았을 때 true 상태이므로 전환 시켜줌.
-            Vector3 dir = preView[preViewIndex].transform.position - rigid.transform.position;
-
-            rigid.AddForce(dir * 1, ForceMode.Impulse);
-            preView[preViewIndex].SetActive(false);
+            
         }
     }
 
