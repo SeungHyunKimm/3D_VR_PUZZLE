@@ -4,90 +4,94 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    Rigidbody rigid;                    //hit 게임 오브젝트의 rigid 컴포넌트
-    public GameObject [] preView;       //퍼즐 프리뷰 배열
-    int preViewIndex;                   //선택한 퍼즐의 인덱스
+    public static Rigidbody rigid;
+    public static int preViewIndex;                   //선택한 퍼즐의 인덱스
+    public static PuzzleManager pr;
+    public GameObject[] preView;       //퍼즐 프리뷰 배열
+    Ray ray;
+    RaycastHit hit;
+    public float Speed;
+    EffectSettings es;
+    public GameObject shot;
+    public GameObject pos;
+    public GameObject setting;
     // Start is called before the first frame update
     void Start()
     {
-
-
+        es = shot.GetComponent<EffectSettings>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
+        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    if(Physics.Raycast(ray , out hit))
-        //    {
-        //        rigid = hit.transform.GetComponent<Rigidbody>();
-        //        Vector3 dir = Camera.main.transform.position - hit.transform.position;
-        //        rigid.AddForce(dir * 0.2f, ForceMode.Impulse);
-
-        //    }
-        //}
-
-        //if (Input.GetMouseButtonDown(1))
-        //{
-        //    if(Physics.Raycast(ray , out hit))
-        //    {
-        //        rigid = hit.transform.GetComponent<Rigidbody>();
-        //        hit.transform.position = transform.position;
-        //        rigid.isKinematic = true;
-        //    }
-        //}
-        if(Physics.Raycast(ray , out hit))
+        if (Physics.Raycast(ray, out hit))
         {
             if (Input.GetMouseButtonDown(0))                    //오른손으로 클릭 시 멈추게 
-            {                                 
-                for (int i = 0; i < preView.Length; i++)
+                Shot();
+
+            if (pr != null)         //참조 된 값이 없으면 작동안함 
+            {
+                if (Input.GetKey(KeyCode.Space))               //멈춘 물체를 끌어당기기
                 {
-                    if (preView[i].name == hit.transform.gameObject.name) //프리뷰 인덱스 저장 및 Catch상태로 변환 
+                    Vector3 dir = Camera.main.transform.position - hit.transform.position;
+                    pr.Move(dir, 0.05f);
+                }
+                else if (Input.GetKeyUp(KeyCode.Space))
+                {
+                    pr.state = PuzzleManager.PuzzleState.Revolution;
+                    pr = null;
+                }
+
+                if (Input.GetMouseButton(1))                //왼손
+                {
+                    if (hit.transform.gameObject.name == "Canvas")  //프리뷰 생성 위치 지정 캔버스 한정
                     {
-                        rigid = hit.transform.GetComponent<Rigidbody>();
-                        //PuzzleManager.instance.state = PuzzleManager.PuzzleState.Catch; //Catch상태 전환
-                        rigid.isKinematic = true;                        //물리 효과 적용 상태로 전환
-                        preViewIndex = i;
-                        break;
+                        preView[preViewIndex].SetActive(true);
+                        int x = (int)hit.point.x;
+                        int y = (int)hit.point.y;
+                        preView[preViewIndex].transform.position = new Vector2(x, y);
                     }
                 }
-            }
-            else if (Input.GetKey(KeyCode.Space))               //멈춘 물체를 끌어당기기
-            {
-                rigid.isKinematic = false;
-                Vector3 dir = Camera.main.transform.position - hit.transform.position;
-                rigid.AddForce(dir * 0.05f, ForceMode.Impulse);
-            }
-            else if (Input.GetKeyUp(KeyCode.Space))
-            {
-                //.state = PuzzleManager.PuzzleState.Revolution;
-            }
-            
-            
-            if (Input.GetMouseButton(1))                //왼손
-            {
-                if (hit.transform.gameObject.name == "Canvas")  //프리뷰 생성 위치 지정 캔버스 한정
+                else if (Input.GetMouseButtonUp(1))                //지정 된 위치로 물체 보내기 및 프리뷰 비활성화
                 {
-                    preView[preViewIndex].SetActive(true);
-
-                    int x = (int)hit.point.x;
-                    int y = (int)hit.point.y;
-
-                    preView[preViewIndex].transform.position = new Vector2(x, y);
+                    Vector3 dir = preView[preViewIndex].transform.position - rigid.transform.position;
+                    pr.Move(dir, Speed);
+                    pr.state = PuzzleManager.PuzzleState.Fusion;
+                    preView[preViewIndex].SetActive(false);
+                    pr = null;
                 }
             }
-            else if (Input.GetMouseButtonUp(1))                //지정 된 위치로 물체 보내기 및 프리뷰 비활성화
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            setting.SetActive(true);
+        }
+    }
+
+    void Shot()
+    {
+        shot.SetActive(true);
+        shot.transform.position = Camera.main.transform.position;
+        pos.transform.position = Camera.main.transform.position;
+        es.Target = hit.transform.gameObject;
+    }
+    public void PuzzleChoiceChange(GameObject go)                   //Shot 발사 후 Catch 상태로 전환
+    {
+        for (int i = 0; i < preView.Length; i++)
+        {
+            if (preView[i].name == go.name)     //프리뷰 인덱스 저장 및 Catch상태로 변환 
             {
-                //PuzzleManager.instance.state = PuzzleManager.PuzzleState.Catch;
-                rigid.isKinematic = false;                     //잡았을 때 true 상태이므로 전환 시켜줌.
-                Vector3 dir = preView[preViewIndex].transform.position - rigid.transform.position;
-                
-                rigid.AddForce(dir * 1, ForceMode.Impulse);
-                preView[preViewIndex].SetActive(false);
+                if (preView[preViewIndex].name != go.transform.gameObject.name && pr != null && pr.state == PuzzleManager.PuzzleState.Catch)
+                    pr.state = PuzzleManager.PuzzleState.Revolution;
+                rigid = go.transform.GetComponent<Rigidbody>();
+                pr = go.transform.GetComponent<PuzzleManager>();
+                pr.state = PuzzleManager.PuzzleState.Catch;
+                rigid.isKinematic = true;
+                preViewIndex = i;
+                break;
             }
         }
     }
