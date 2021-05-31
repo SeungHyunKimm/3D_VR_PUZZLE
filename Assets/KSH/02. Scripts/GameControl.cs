@@ -11,7 +11,7 @@ public class GameControl : MonoBehaviour
     public static bool youWin;
     void Start()
     {
-        winText.SetActive(false);
+        //winText.SetActive(false);
         youWin = false;
     }
 

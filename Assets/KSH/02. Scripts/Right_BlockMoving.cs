@@ -157,7 +157,6 @@ public class Right_BlockMoving : MonoBehaviour
         //오른쪽 B버튼을 떼면
         if (OVRInput.GetUp(OVRInput.Button.Two, OVRInput.Controller.RTouch))
         {
-
             //잡은놈이 아무것도 없다면
             catchObj.SetParent(null);
             //잡은 놈의 리지드바디를 활성화하기 위해 isKinematic을 비활성화하고
