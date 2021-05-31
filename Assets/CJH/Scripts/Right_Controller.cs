@@ -264,6 +264,8 @@ public class Right_Controller : MonoBehaviour
             {
                 print("isClick");
                 SelectObj = hit.transform.gameObject;
+                
+
             }
         }
         else if (v < 0)
@@ -277,7 +279,8 @@ public class Right_Controller : MonoBehaviour
             if(Physics.Raycast(ray, out hit, 100, layer))
             {
                 SelectObj.transform.position = hit.point;
-                //hit.point = new Vector3(0, 0, 0);
+                hit.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+               
             }
         }
         //문제는 오래 쥐고 있을 수록 퍼즐조각이 앞으로 다가와진다.
