@@ -23,7 +23,7 @@ public class ButtonManager : MonoBehaviour
 
     public void OnClickRetry()            //재도전
     {
-        SceneManager.LoadScene(2);
+        //SceneManager.LoadScene();
     }
 
     public void OnClickOther()            //다른 목록보기
