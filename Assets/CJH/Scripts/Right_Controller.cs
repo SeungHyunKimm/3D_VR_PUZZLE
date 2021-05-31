@@ -29,6 +29,11 @@ public class Right_Controller : MonoBehaviour
     {
         switch (ButtonManager.instance.state)
         {
+            case ButtonManager.ButtonState.Start:
+            case ButtonManager.ButtonState.Select:
+                ModeB_RightController();
+                break;
+
             case ButtonManager.ButtonState.Mode_A:
                 ModeA_RightController();
                 break;
@@ -42,30 +47,48 @@ public class Right_Controller : MonoBehaviour
                 ModeD_RightController();
                 break;
         }
+        DrawGuideLine();
     }
 
-    void ModeA_RightController()                             //A 모드 오른 손 컨트롤러
+    void ModeA_RightController()                             //A 모드 오른손 컨트롤러
     {
         ray = new Ray(transform.position, transform.forward);
 
-        if (Physics.SphereCast(ray, 0.7f, out hit, 100))
+        if (Physics.Raycast(ray, out hit, 100))
         {
+
             PuzzleControl();
+
         }
     }
     void PuzzleControl()
     {
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B 버튼
+         if (ButtonManager.instance.settingUI.activeSelf && v > 0)
+         {
+            if(hit.transform.gameObject.name.Contains("Cancle"))
+            {
+                ButtonManager.instance.OnClickCancle();
+            }
+            if (hit.transform.gameObject.name.Contains("Retry"))
+            {
+                ButtonManager.instance.OnClickRetry();
+            }
+            if (hit.transform.gameObject.name.Contains("Other"))
+            {
+                ButtonManager.instance.OnClickOther();
+            }
+            return;
+         }
         if (v > 0)                        //클릭 또는 클릭 중
-        {
-            Shot();
-        }
+              Shot();
+        
         if (pr != null)                       //선택된 블록이 없을 시 값 참조에 오류 방지
         {
             if (OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch))  //A 버튼 클릭 중
             {
                 Vector3 dir = transform.position - hit.transform.position;
-                pr.Move(dir, 0.05f);
+                pr.Move(dir, 0.025f);
             }
             else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch)) //A 버튼 Up
             {
@@ -88,7 +111,6 @@ public class Right_Controller : MonoBehaviour
             else if (OVRInput.GetUp(OVRInput.Button.Two, OVRInput.Controller.RTouch))
             {
                 Vector3 dir = preView[preViewIndex].transform.position - rigid.transform.position;
-                print(rigid.name);
                 pr.Move(dir, Speed);
                 pr.state = PuzzleManager.PuzzleState.Fusion;
                 preView[preViewIndex].SetActive(false);
@@ -96,25 +118,27 @@ public class Right_Controller : MonoBehaviour
             }
 
         }
+        
     }
 
-    void ModeB_RightController()
+    void ModeB_RightController()            //B 모드 오른손 컨트롤러
     {
-        CatchObj();
-        DropObj();
-        ThrowObj();
+
+        DrawGuideLine();
+        OnClickButtonUI();
+
     }
-    void ModeC_RightController()
+    void ModeC_RightController()            //C 모드 오른손 컨트롤러
     {
-        CatchObj();
-        DropObj();
-        ThrowObj();
+
+        DrawGuideLine();
+
     }
-    void ModeD_RightController()
+    void ModeD_RightController()            //D 모드 오른손 컨트롤러
     {
-        CatchObj();
-        DropObj();
-        ThrowObj();
+
+        DrawGuideLine();
+
     }
 
     void Shot()
@@ -157,6 +181,36 @@ public class Right_Controller : MonoBehaviour
         }
     }
 
+    void OnClickButtonUI() //승현 StartScene에서 사용할 함수 - 버튼 누를 시 다음 씬 전환
+    {
+        ray = new Ray(transform.position, transform.forward);
+        float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B 버튼
+        if (v > 0)
+        {
+            //int layer = 1 << LayerMask.NameToLayer("UI");
+            //if (Physics.Raycast(ray, out hit, 1000, layer))
+            if (hit.transform.gameObject.name.Contains("StartButton"))
+            {
+                ButtonManager.instance.OnClickStart();
+            }
+            if (hit.transform.gameObject.name.Contains("A_Mode"))
+            {
+                ButtonManager.instance.OnClickMode_A();
+            }
+            if (hit.transform.gameObject.name.Contains("B_Mode"))
+            {
+                ButtonManager.instance.OnClickMode_B();
+            }
+            if (hit.transform.gameObject.name.Contains("C_Mode"))
+            {
+                ButtonManager.instance.OnClickMode_C();
+            }
+            if (hit.transform.gameObject.name.Contains("D_Mode"))
+            {
+                ButtonManager.instance.OnClickMode_D();
+            }
+        }
+    }
 
     void CatchObj()
     {
@@ -170,7 +224,7 @@ public class Right_Controller : MonoBehaviour
             Ray ray = new Ray(transform.position, transform.forward);
             int layer = 1 << LayerMask.NameToLayer("Puzzle");
             //부딪힌 놈의 레이어가 Puzzle이면
-            if (Physics.SphereCast(ray, 0.7f, out hit, 100, layer))
+            if (Physics.Raycast(ray, out hit, 100, layer))
             {
                 for (int i = 0; i < preView.Length; i++)
                 {
@@ -217,11 +271,11 @@ public class Right_Controller : MonoBehaviour
             //콜리전 형태로 손 앞에 오게끔 설계하자
         }
 
-        else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch))
-        {
-            //PuzzleManager.instance.state = PuzzleManager.PuzzleState.Revolution;
-            pr.state = PuzzleManager.PuzzleState.Revolution;
-        }
+        //else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch))
+        //{
+        //    //PuzzleManager.instance.state = PuzzleManager.PuzzleState.Revolution;
+        //    //pr.state = PuzzleManager.PuzzleState.Revolution;
+        //}
 
 
         if (OVRInput.Get(OVRInput.Button.Two, OVRInput.Controller.RTouch))
@@ -229,7 +283,7 @@ public class Right_Controller : MonoBehaviour
             Ray ray = new Ray(transform.position, transform.forward);
             int layer = 1 << LayerMask.NameToLayer("Canvas");
             //부딪힌 놈의 레이어가 Puzzle이면
-            if (Physics.SphereCast(ray, 0.7f, out hit, 100, layer))
+            if (Physics.Raycast(ray, out hit, 100, layer))
             {
                 preView[preViewIndex].SetActive(true);
 
