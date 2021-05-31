@@ -65,6 +65,7 @@ public class BlockMove : MonoBehaviour
                 
                 //정답 처리도 만들어보자(퍼즐을 원위치 시켰을 때)
                 //각 색깔 10개마다 줄이 완성되면 정답 완성을 프린트 해보자.
+                //각 색깔줄마다 수시로 검사를 하여 만약 한줄의 컬러가 같으면 정답 처리.
             }
         }
     }
@@ -72,11 +73,11 @@ public class BlockMove : MonoBehaviour
 
     void OnClickLeftMouse()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
-            if (Input.GetMouseButtonDown(0))
+            if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
             {
                 if (cnt == 0)
                 {
