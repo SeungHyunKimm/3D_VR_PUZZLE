@@ -14,7 +14,7 @@ public class Right_Controller : MonoBehaviour
     LineRenderer lr;
     public GameObject[] preView; //프리 뷰 담는 배열
     public float Speed;          //캔퍼스로 이동하는 속도
-                                 
+
     public GameObject shot;
     public GameObject pos;
     EffectSettings es;
@@ -27,11 +27,21 @@ public class Right_Controller : MonoBehaviour
 
     void Update()
     {
-        RaytoRightController();
-        DrawGuideLine();
+        switch (ButtonManager.instance.state)
+        {
+            case ButtonManager.ButtonState.Mode_A:
+                ModeA_RightController();
+                break;
+            case ButtonManager.ButtonState.Mode_B:
+                break;
+            case ButtonManager.ButtonState.Mode_C:
+                break;
+            case ButtonManager.ButtonState.Mode_D:
+                break;
+        }
     }
 
-    void RaytoRightController()
+    void ModeA_RightController()                             //A 모드 오른 손 컨트롤러
     {
         ray = new Ray(transform.position, transform.forward);
 
@@ -40,8 +50,6 @@ public class Right_Controller : MonoBehaviour
             PuzzleControl();
         }
     }
-
-
     void PuzzleControl()
     {
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B 버튼
@@ -86,6 +94,8 @@ public class Right_Controller : MonoBehaviour
 
         }
     }
+
+
     void Shot()
     {
         shot.SetActive(true);
@@ -154,4 +164,6 @@ public class Right_Controller : MonoBehaviour
         rb.velocity = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch) * throwPower;
 
     }
+
+
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+
     public static Rigidbody rigid;
     public static int preViewIndex;                   //º±≈√«— ∆€¡Ò¿« ¿Œµ¶Ω∫
     public static PuzzleManager pr;
@@ -15,6 +16,7 @@ public class GameManager : MonoBehaviour
     public GameObject shot;
     public GameObject pos;
     public GameObject setting;
+    ButtonManager bm;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +25,22 @@ public class GameManager : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {
+        switch (ButtonManager.instance.state)
+        {
+            case ButtonManager.ButtonState.Mode_A:
+                ModeA_RightController();
+                break;
+            case ButtonManager.ButtonState.Mode_B:
+                break;
+            case ButtonManager.ButtonState.Mode_C:
+                break;
+            case ButtonManager.ButtonState.Mode_D:
+                break;
+        }
+    }
+
+    void ModeA_RightController()
     {
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 

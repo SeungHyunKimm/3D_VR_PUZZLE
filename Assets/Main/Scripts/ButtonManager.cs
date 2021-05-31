@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class ButtonManager : MonoBehaviour
 {
+    public static ButtonManager instance;
     public enum ButtonState
     {
         Start,
@@ -17,28 +18,24 @@ public class ButtonManager : MonoBehaviour
 
     public ButtonState state;
 
-    void Start()
+    private void Awake()
     {
-
+        instance = this;
     }
 
-    private void Update()
-    {
-    }
-
-    public void OnClickCancel()             //나가기
+    public void OnClickCancle()             //나가기
     {
         gameObject.SetActive(false);
     }
 
     public void OnClickRetry()            //재도전
     {
-
+        SceneManager.LoadScene((int)state);
     }
 
     public void OnClickOther()            //다른 목록보기
     {
-
+        SceneManager.LoadScene(1);
     }
 
     public void OnClickStart()      //클릭시 스타트
