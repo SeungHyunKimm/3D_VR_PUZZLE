@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     public static Rigidbody rigid;
     public static int preViewIndex;                   //선택한 퍼즐의 인덱스
     public static PuzzleManager pr;
+    public static CanvasManager cv;
     public GameObject[] preView;       //퍼즐 프리뷰 배열
     Ray ray;
     RaycastHit hit;
@@ -20,6 +21,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        GameObject canvas = GameObject.Find("Canvas");
+        cv = canvas.GetComponent<CanvasManager>();
         es = shot.GetComponent<EffectSettings>();
     }
 
@@ -71,12 +74,17 @@ public class GameManager : MonoBehaviour
                         int y = (int)hit.point.y;
                         preView[preViewIndex].transform.position = new Vector2(x, y);
                     }
+                    else
+                        preView[preViewIndex].SetActive(false);
                 }
                 else if (Input.GetMouseButtonUp(1))                //지정 된 위치로 물체 보내기 및 프리뷰 비활성화
                 {
-                    Vector3 dir = preView[preViewIndex].transform.position - rigid.transform.position;
-                    pr.Move(dir, Speed);
-                    pr.state = PuzzleManager.PuzzleState.Fusion;
+                    if (pr.state == PuzzleManager.PuzzleState.Catch)
+                    {
+                        pr.state = PuzzleManager.PuzzleState.Fusion;
+                        Vector3 dir = preView[preViewIndex].transform.position - rigid.transform.position;
+                        pr.Move(dir, Speed);
+                    }
                     preView[preViewIndex].SetActive(false);
                     pr = null;
                 }
@@ -109,6 +117,7 @@ public class GameManager : MonoBehaviour
                 pr.state = PuzzleManager.PuzzleState.Catch;
                 rigid.isKinematic = true;
                 preViewIndex = i;
+                cv.CatchToCheckBox(preViewIndex);
                 break;
             }
         }
