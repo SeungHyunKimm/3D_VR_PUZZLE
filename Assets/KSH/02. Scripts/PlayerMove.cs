@@ -9,7 +9,7 @@ public class PlayerMove : MonoBehaviour
     public float rotateSpeed = 3;
     void Start()
     {
-        
+
 
 
     }
@@ -28,5 +28,17 @@ public class PlayerMove : MonoBehaviour
         Vector2 joystickR = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
         //y축으로 회전을 자유롭게 하고 싶다.
         transform.Rotate(0, joystickR.x * rotateSpeed * Time.deltaTime, 0);
+        LController();
+    }
+
+
+
+    void LController()
+    {
+        if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch))
+        {
+            print("L Controller Y Button is activated");
+            ButtonManager.instance.settingUI.SetActive(true);
+        }
     }
 }

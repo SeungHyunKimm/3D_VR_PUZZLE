@@ -90,7 +90,10 @@ public class CanvasManager : MonoBehaviour
         for (int i = 0; i < checkpuzz.Length; i++)
         {
             if (!checkpuzz[i])
+            {
+                checkpuzz[i] = false;
                 return false;
+            }
         }
         return true;
     }
