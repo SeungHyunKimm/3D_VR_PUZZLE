@@ -18,6 +18,7 @@ public class Right_BlockMoving : MonoBehaviour
     public GameObject[] preView;
     //선택한 퍼즐의 인덱스
     int preViewIndex;
+    PuzzleManager pr;
 
     void Start()
     {
@@ -75,7 +76,8 @@ public class Right_BlockMoving : MonoBehaviour
                     if (preView[i].name == hit.transform.gameObject.name) //프리뷰 인덱스 저장 및 Catch상태로 변환 
                     {
                         rigid = hit.transform.GetComponent<Rigidbody>();
-                        //PuzzleManager.instance.state = PuzzleManager.PuzzleState.Catch; //Catch상태 전환
+                        pr = hit.transform.GetComponent<PuzzleManager>();
+                        pr.state = PuzzleManager.PuzzleState.Catch;
                         rigid.isKinematic = true;                        //물리 효과 적용 상태로 전환
                         preViewIndex = i;
                         break;
@@ -115,7 +117,7 @@ public class Right_BlockMoving : MonoBehaviour
         }
         else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch))
         {
-            //PuzzleManager.instance.state = PuzzleManager.PuzzleState.Revolution;
+            pr.state = PuzzleManager.PuzzleState.Revolution;
         }
         
         
@@ -136,7 +138,7 @@ public class Right_BlockMoving : MonoBehaviour
         }
         else if (OVRInput.GetUp(OVRInput.Button.Two, OVRInput.Controller.RTouch))
         {
-           // PuzzleManager.instance.state = PuzzleManager.PuzzleState.Catch;
+            pr.state = PuzzleManager.PuzzleState.Catch;
             rigid.isKinematic = false;                     //잡았을 때 true 상태이므로 전환 시켜줌.
             Vector3 dir = preView[preViewIndex].transform.position - rigid.transform.position;
 

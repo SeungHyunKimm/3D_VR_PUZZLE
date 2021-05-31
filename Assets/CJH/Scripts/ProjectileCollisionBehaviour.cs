@@ -11,7 +11,7 @@ public enum RandomMoveCoordinates
   XYZ
 }
 
-public class ProjectileCollisionBehaviour : MonoBehaviour
+public class ProjectileCollisionBehaviour : GameManager //Right_Controller
 {
   public float RandomMoveRadius;
   public float RandomMoveSpeed;
@@ -224,6 +224,7 @@ public class ProjectileCollisionBehaviour : MonoBehaviour
     var coll = tTarget.GetComponentInChildren<Collider>();
     if (coll!=null && coll.Raycast(ray, out raycastHit, effectSettings.MoveDistance)) {
       hit = raycastHit;
+      PuzzleChoiceChange(hit.transform.gameObject);
     }
   }
 
