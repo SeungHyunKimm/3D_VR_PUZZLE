@@ -57,7 +57,7 @@ public class PuzzleManager : MonoBehaviour
 
     IEnumerator ResetGravity()           //시작 0.5 초 후 무중력 상태로 전환
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1);
         rigid.useGravity = false;
     }
 
