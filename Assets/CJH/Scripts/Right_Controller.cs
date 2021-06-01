@@ -52,18 +52,18 @@ public class Right_Controller : MonoBehaviour
                 ModeD_RightController();
                 break;
         }
-
+        DrawGuideLine();
     }
 
     void ModeA_RightController()                             //A 모드 오른손 컨트롤러
     {
+        
         ray = new Ray(transform.position, transform.forward);
 
         if (Physics.Raycast(ray, out hit, 100))
         {
 
             PuzzleControl();
-            DrawGuideLine();
         }
     }
     void PuzzleControl()
@@ -132,21 +132,21 @@ public class Right_Controller : MonoBehaviour
     void ModeB_RightController()            //B 모드 오른손 컨트롤러
     {
 
-        DrawGuideLine();
+        
         CatchObj();
 
     }
     void ModeC_RightController()            //C 모드 오른손 컨트롤러
     {
 
-        DrawGuideLine();
+       
         CatchObj();
 
     }
     void ModeD_RightController()            //D 모드 오른손 컨트롤러
     {
 
-        DrawGuideLine();
+      
         CatchObj();
 
     }
@@ -154,7 +154,7 @@ public class Right_Controller : MonoBehaviour
     void Start_Select_RightController()         // Start & Select Mode 오른손 컨트롤러
     {
 
-        DrawGuideLine();
+       
         OnClickButtonUI();
 
     }
