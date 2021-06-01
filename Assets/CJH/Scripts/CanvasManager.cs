@@ -47,7 +47,7 @@ public class CanvasManager : MonoBehaviour
     {
         PuzzleManager pr = collision.transform.GetComponent<PuzzleManager>();
         if (pr.state == PuzzleManager.PuzzleState.Fusion)
-        {s
+        {
             pr.state = PuzzleManager.PuzzleState.Fixed;
             collision.rigidbody.isKinematic = true;
             CheckBox(collision.gameObject);
