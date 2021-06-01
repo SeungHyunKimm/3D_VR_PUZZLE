@@ -279,7 +279,7 @@ public class Right_Controller : MonoBehaviour
             if(Physics.Raycast(ray, out hit, 100, layer))
             {
                 SelectObj.transform.position = hit.point;
-                hit.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+                //hit.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
                
             }
         }
