@@ -47,7 +47,6 @@ public class BlockMove : MonoBehaviour
             {
                 //x,y 좌표값을 담을 변수 index
                 int index = ((i + j) + 9 * i);
-
                 //index를 Grid에 담자
                 grid[i, j] = Blocks[index].transform;
 
@@ -62,12 +61,18 @@ public class BlockMove : MonoBehaviour
                 //temp변수 만들어서 위치를 Swap한다.
                 grid[i, j].transform.position = grid[x, y].transform.position;
                 grid[x, y].transform.position = TempGrid;
-                
+
                 //정답 처리도 만들어보자(퍼즐을 원위치 시켰을 때)
                 //각 색깔 10개마다 줄이 완성되면 정답 완성을 프린트 해보자.
                 //각 색깔줄마다 수시로 검사를 하여 만약 한줄의 컬러가 같으면 정답 처리.
             }
         }
+    }
+
+    void ColorAnswer(int index)
+    {
+        //if(index.t)
+
     }
 
 
@@ -87,6 +92,23 @@ public class BlockMove : MonoBehaviour
 
                 else if (cnt == 1)
                 {
+                    //클릭한 놈 x,y값 지역변수 선언
+
+                    int x = (int)hit.transform.position.x;
+                    int y = (int)hit.transform.position.y;
+
+
+                    //만약 grid [x,y]값의 이름이 마우스 클릭한 놈의 이름이 같다면
+                    if (grid[x, y].transform.gameObject.name == hit.transform.gameObject.name)
+                    {
+                        print(hit.transform.gameObject.name);
+
+                        //정답처리를 한다.
+                        
+
+
+                    }
+
                     Position2 = hit.transform.gameObject;
                     Vector3 temp = Position1.transform.position;
                     Position1.transform.position = Position2.transform.position;
