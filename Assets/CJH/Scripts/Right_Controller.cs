@@ -112,14 +112,19 @@ public class Right_Controller : MonoBehaviour
 
                     preView[preViewIndex].transform.position = new Vector2(x, y);
                 }
+                else
+                    preView[preViewIndex].SetActive(false);
             }
             else if (OVRInput.GetUp(OVRInput.Button.Two, OVRInput.Controller.RTouch))
             {
-                Vector3 dir = preView[preViewIndex].transform.position - rigid.transform.position;
-                pr.Move(dir, Speed);
-                pr.state = PuzzleManager.PuzzleState.Fusion;
+                if (pr.state == PuzzleManager.PuzzleState.Catch)
+                {
+                    pr.state = PuzzleManager.PuzzleState.Fusion;
+                    Vector3 dir = preView[preViewIndex].transform.position - rigid.transform.position;
+                    pr.Move(dir, Speed);
+                }
                 preView[preViewIndex].SetActive(false);
-                pr = null;                           //프리 뷰 생성 금지
+                pr = null;
             }
         }
     }
