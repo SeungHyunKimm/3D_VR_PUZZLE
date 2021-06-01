@@ -32,7 +32,7 @@ public class BlockMove : MonoBehaviour
     void Update()
     {
 
-        OnClickLeftMouse();
+        OnClickRTouch();
 
     }
 
@@ -76,7 +76,7 @@ public class BlockMove : MonoBehaviour
     }
 
 
-    void OnClickLeftMouse()
+    void OnClickRTouch()
     {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
@@ -101,7 +101,7 @@ public class BlockMove : MonoBehaviour
                     //만약 grid [x,y]값의 이름이 마우스 클릭한 놈의 이름이 같다면
                     if (grid[x, y].transform.gameObject.name == hit.transform.gameObject.name)
                     {
-                        print(hit.transform.gameObject.name);
+                        print(grid[x,y].transform.gameObject.name);
 
                         //정답처리를 한다.
                         
