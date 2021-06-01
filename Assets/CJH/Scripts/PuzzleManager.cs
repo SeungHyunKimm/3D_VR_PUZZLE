@@ -12,11 +12,13 @@ public class PuzzleManager : MonoBehaviour
     float[] xyz;              //물체의 각도 값
     int[] rotspeed;           //회전 속도
     GameManager gm;           //프리뷰 인덱스 가져오기
+    public Vector3 controlpos;//컨트롤 지정 위치 값
 
     public enum PuzzleState
     {
         Revolution,           //공전 상태
         Catch,                //잡힌 상태
+        Control,              //조정 상태
         Fusion,               //결합 상태
         Fixed                 //고정 상태
     }
@@ -45,6 +47,9 @@ public class PuzzleManager : MonoBehaviour
             case PuzzleState.Revolution:
                 Revolution();
                 break;
+            case PuzzleState.Control:
+                Control();
+                break;
             case PuzzleState.Fusion:
                 Fusion();
                 break;
@@ -67,10 +72,10 @@ public class PuzzleManager : MonoBehaviour
         dist = Vector3.Distance(transform.position, center.transform.position);
         transform.forward = center.transform.position - transform.position;
 
-        if (dist <= 40)
+        if (dist <= 20)
         {
             dir = transform.forward + transform.right;
-            rigid.AddForce(dir * 0.005f, ForceMode.Impulse);
+            rigid.AddForce(dir * 0.01f, ForceMode.Impulse);
         }
         else
         {
@@ -105,13 +110,19 @@ public class PuzzleManager : MonoBehaviour
         transform.Rotate(0, 1, 0);
     }
 
+    void Control()
+    {
+        Move(controlpos, 0.05f);
+        Catch();
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         PuzzleManager pr = collision.transform.GetComponent<PuzzleManager>();
         if (collision.gameObject.layer == LayerMask.NameToLayer("Puzzle") && state != PuzzleState.Fixed)
         {
-            if(pr.state != PuzzleState.Fixed)
-            state = PuzzleState.Revolution;
+            if (pr.state != PuzzleState.Fixed)
+                state = PuzzleState.Revolution;
         }
     }
 }

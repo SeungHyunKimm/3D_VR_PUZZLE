@@ -17,7 +17,8 @@ public class GameManager : MonoBehaviour
     public GameObject shot;
     public GameObject pos;
     public GameObject setting;
-    ButtonManager bm;
+    public GameObject control;
+    Vector3 controlpos;
     // Start is called before the first frame update
     void Start()
     {
@@ -52,31 +53,12 @@ public class GameManager : MonoBehaviour
             if (Input.GetMouseButtonDown(0))                    //오른손으로 클릭 시 멈추게 
                 Shot();
 
-            if (pr != null)         //참조 된 값이 없으면 작동안함 
-            {
-                if (Input.GetKey(KeyCode.Space))               //멈춘 물체를 끌어당기기
-                {
-                    Vector3 dir = Camera.main.transform.position - hit.transform.position;
-                    pr.Move(dir, 0.05f);
-                }
-                else if (Input.GetKeyUp(KeyCode.Space))
-                {
-                    pr.state = PuzzleManager.PuzzleState.Revolution;
-                    pr = null;
-                }
+            if (pr == null) return;
+                if (pr.state != PuzzleManager.PuzzleState.Catch)
+                    preView[preViewIndex].SetActive(false);
 
-                if (Input.GetMouseButton(1))                //왼손
-                {
-                    if (hit.transform.gameObject.name == "Canvas")  //프리뷰 생성 위치 지정 캔버스 한정
-                    {
-                        preView[preViewIndex].SetActive(true);
-                        int x = (int)hit.point.x;
-                        int y = (int)hit.point.y;
-                        preView[preViewIndex].transform.position = new Vector2(x, y);
-                    }
-                    else
-                        preView[preViewIndex].SetActive(false);
-                }
+                if (Input.GetMouseButtonDown(1))                //왼손
+                    preView[preViewIndex].SetActive(true);
                 else if (Input.GetMouseButtonUp(1))                //지정 된 위치로 물체 보내기 및 프리뷰 비활성화
                 {
                     if (pr.state == PuzzleManager.PuzzleState.Catch)
@@ -88,12 +70,31 @@ public class GameManager : MonoBehaviour
                     preView[preViewIndex].SetActive(false);
                     pr = null;
                 }
-            }
-        }
 
-        if (Input.GetKeyDown(KeyCode.Z))
+                if (hit.transform.gameObject.name == "Canvas")  //프리뷰 생성 위치 지정 캔버스 한정
+                {
+                    int x = (int)hit.point.x;
+                    int y = (int)hit.point.y;
+                    preView[preViewIndex].transform.position = new Vector2(x, y);
+                }
+        }
+        if (pr == null) return;
+        if (pr.state == PuzzleManager.PuzzleState.Revolution) return;
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            setting.SetActive(true);
+            pr.state = PuzzleManager.PuzzleState.Control;
+            controlpos = Camera.main.transform.position;
+            control.transform.position = controlpos;
+        }
+        if (Input.GetKey(KeyCode.Space))               //멈춘 물체를 끌어당기기
+        {
+            Vector3 dir = Camera.main.transform.position - controlpos;
+            pr.controlpos = dir;
+        }
+        else if (Input.GetKeyUp(KeyCode.Space))
+        {
+            rigid.isKinematic = true;
+            pr.state = PuzzleManager.PuzzleState.Catch;
         }
     }
 

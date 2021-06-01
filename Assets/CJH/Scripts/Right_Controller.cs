@@ -8,6 +8,8 @@ public class Right_Controller : MonoBehaviour
     public static int preViewIndex;            //선택한 퍼즐의 프리 뷰
     public static PuzzleManager pr;            //선택한 퍼즐의 PuzzleManager
     public float throwPower = 3;
+    public Transform controlpos;
+
     Ray ray;
     RaycastHit hit;
     Transform catchObj;
@@ -18,6 +20,7 @@ public class Right_Controller : MonoBehaviour
     public GameObject shot;
     public GameObject pos;
     EffectSettings es;
+    
 
 
     GameObject SelectObj; // 선택한 놈 (승현)
@@ -62,8 +65,25 @@ public class Right_Controller : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, 100))
         {
-
             PuzzleControl();
+        }
+
+        if (pr == null) return;
+        if (pr.state == PuzzleManager.PuzzleState.Revolution) return;
+        if (OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch))
+        {
+            pr.state = PuzzleManager.PuzzleState.Control;
+            controlpos.position = transform.position;
+        }
+        if (OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch))  //A 버튼 클릭 중
+        {
+            Vector3 dir = transform.position - controlpos.position;
+            pr.controlpos = dir;
+        }
+        else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch)) //A 버튼 Up
+        {
+            rigid.isKinematic = true;
+            pr.state = PuzzleManager.PuzzleState.Catch;                                                         //프리 뷰 생성 금지
         }
     }
     void PuzzleControl()
@@ -90,17 +110,6 @@ public class Right_Controller : MonoBehaviour
 
         if (pr != null)                       //선택된 블록이 없을 시 값 참조에 오류 방지
         {
-            if (OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch))  //A 버튼 클릭 중
-            {
-                Vector3 dir = transform.position - hit.transform.position;
-                pr.Move(dir, 0.025f);
-            }
-            else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch)) //A 버튼 Up
-            {
-                pr.state = PuzzleManager.PuzzleState.Revolution;                      //공전 상태로 전환
-                pr = null;                                                            //프리 뷰 생성 금지
-            }
-
             if (OVRInput.Get(OVRInput.Button.Two, OVRInput.Controller.RTouch))
             {
                 if (hit.transform.name == "Canvas")                  //캔퍼스일 때 프리 뷰 생성
@@ -125,6 +134,7 @@ public class Right_Controller : MonoBehaviour
                 }
                 preView[preViewIndex].SetActive(false);
                 pr = null;
+                
             }
         }
     }

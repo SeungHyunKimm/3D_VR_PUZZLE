@@ -113,7 +113,7 @@ public class CanvasManager : MonoBehaviour
         return puzzle.Length;
     }
 
-    public void CatchToCheckBox(int index)
+    public void CatchToCheckBox(int index)   
     {
         checkpuzz[index] = false;
     }
