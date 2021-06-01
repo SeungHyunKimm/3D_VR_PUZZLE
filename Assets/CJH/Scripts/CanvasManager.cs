@@ -47,7 +47,7 @@ public class CanvasManager : MonoBehaviour
     {
         PuzzleManager pr = collision.transform.GetComponent<PuzzleManager>();
         if (pr.state == PuzzleManager.PuzzleState.Fusion)
-        {
+        {s
             pr.state = PuzzleManager.PuzzleState.Fixed;
             collision.rigidbody.isKinematic = true;
             CheckBox(collision.gameObject);
@@ -56,10 +56,10 @@ public class CanvasManager : MonoBehaviour
                 blackHole.SetActive(true);
             }
         }
-        else                                                     //튕겨내기
+        else if(pr.state != PuzzleManager.PuzzleState.Fixed)                                         //튕겨내기
         {
             collision.rigidbody.AddForce(transform.position * -1, ForceMode.Impulse);
-            //pr.state = PuzzleManager.PuzzleState.Revolution;
+            pr.state = PuzzleManager.PuzzleState.Revolution;
         }
     }
 
@@ -75,12 +75,12 @@ public class CanvasManager : MonoBehaviour
                 int positionindex = positionX + positionY * height;
                 qd = quad[positionindex].GetComponent<MeshRenderer>().material; //쿼드의 색상 변경
                 pz = puzzle.transform.GetComponent<MeshRenderer>().material;
-                if (grid[positionX, positionY] == null || grid[positionX , positionY].name != puzzle.transform.GetChild(i).name)     
+                if (grid[positionX, positionY] == null || grid[positionX , positionY].name != puzzle.transform.GetChild(i).name)     //퍼즐 틀이 아니거나 퍼즐과 그리드의 이름이 일치하지 않으면 false
                 {
                     checkpuzz[index] = false;
                     return;
                 }
-                else if(grid[positionX , positionY].name == puzzle.transform.GetChild(i).name)
+                else if(grid[positionX , positionY].name == puzzle.transform.GetChild(i).name)    //퍼즐의 이름과 그리드 값이 일치하면 색바꿈
                 {
                     qd.color = pz.color;                    //원래 퍼즐 위치라면 쿼드를 퍼즐 색상으로 변경 
                 }
@@ -163,9 +163,6 @@ public class CanvasManager : MonoBehaviour
                 int positionindex = positionX + (height * positionY);                      //쿼드와 퍼즐이 겹치는 부분을 재조정
                 quad[positionindex].SetActive(true);
                 grid[positionX, positionY] = puzzle[k].transform.GetChild(i);
-                //qd = quad[positionindex].GetComponent<MeshRenderer>().material; //쿼드의 색상 변경
-                //pz = puzzle[k].transform.GetComponent<MeshRenderer>().material;
-                //qd.color = pz.color;
             }
         }
     }

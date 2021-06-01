@@ -21,7 +21,6 @@ public class BlackHole : MonoBehaviour
         center.transform.localScale += new Vector3(0.001f, 0.001f, 0.001f);
         for (int i = 0; i < star.transform.childCount; i++)
         {
-            print(Vector3.Distance(transform.position, star.transform.GetChild(i).position));
             if (Vector3.Distance(transform.position, star.transform.GetChild(i).position) <= 1)
             {
                 star.transform.GetChild(i).localScale -= new Vector3(0.15f, 0.15f, 0.15f);
