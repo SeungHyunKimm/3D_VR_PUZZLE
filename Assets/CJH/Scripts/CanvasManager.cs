@@ -56,6 +56,11 @@ public class CanvasManager : MonoBehaviour
                 blackHole.SetActive(true);
             }
         }
+        else                                                     //튕겨내기
+        {
+            collision.rigidbody.AddForce(transform.position * -1, ForceMode.Impulse);
+            //pr.state = PuzzleManager.PuzzleState.Revolution;
+        }
     }
 
     void CheckBox(GameObject puzzle)                                            //퍼즐을 붙였을 때 정답처리 여부
@@ -72,6 +77,7 @@ public class CanvasManager : MonoBehaviour
                 pz = puzzle.transform.GetComponent<MeshRenderer>().material;
                 if (grid[positionX, positionY] == null)     
                 {
+                    //print(grid[positionX, positionY].name);
                     checkpuzz[index] = false;
                     return;
                 }
@@ -116,7 +122,7 @@ public class CanvasManager : MonoBehaviour
             int x = Random.Range(0, width);
             int y = Random.Range(0, height);
             int index = x + (height * y);                 //Canvas 의 자식 Quad들의 인덱스 접근
-            if (CheckGrid(k, index)) continue;           //퍼즐들의 위치 중복 제거
+            if (CheckGrid(k, index)) continue;            //퍼즐들의 위치 중복 제거
             SetQuadColor(x, y, k, index);
             k++;
         }
@@ -132,7 +138,9 @@ public class CanvasManager : MonoBehaviour
             if (positionX >= 0 && positionX < width && positionY >= 0 && positionY < height)
             {
                 if (grid[positionX, positionY])
+                {
                     return true;
+                }
             }
         }
         return false;
@@ -151,6 +159,9 @@ public class CanvasManager : MonoBehaviour
                 int positionindex = positionX + (height * positionY);                      //쿼드와 퍼즐이 겹치는 부분을 재조정
                 quad[positionindex].SetActive(true);
                 grid[positionX, positionY] = puzzle[k].transform.GetChild(i);
+                qd = quad[positionindex].GetComponent<MeshRenderer>().material; //쿼드의 색상 변경
+                pz = puzzle[k].transform.GetComponent<MeshRenderer>().material;
+                qd.color = pz.color;
             }
         }
     }

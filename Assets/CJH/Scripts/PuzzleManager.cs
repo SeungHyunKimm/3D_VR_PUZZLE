@@ -34,6 +34,7 @@ public class PuzzleManager : MonoBehaviour
         center = canvasGo.GetComponent<Transform>();
         GameObject gmGo = GameObject.Find("GameManager");
         gm = gmGo.GetComponent<GameManager>();
+        rigid.isKinematic = true;
     }
 
     // Update is called once per frame
