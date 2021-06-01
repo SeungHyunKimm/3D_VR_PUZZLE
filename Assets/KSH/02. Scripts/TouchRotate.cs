@@ -47,17 +47,17 @@ public class TouchRotate : MonoBehaviour
     void LeftButtonOn()
     {
         //VR 컨트롤러로 움직일 때
-        //Ray ray = new Ray(transform.position, transform.forward);
+        Ray ray = new Ray(transform.position, transform.forward);
         //마우스로 움직일 때
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
             //print("hit");
-            if (Input.GetMouseButtonDown(0) || OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch))
+            if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
             {
                 print("rotate complete");
-                hit.transform.Rotate(0, 0, 90f);
+                hit.transform.Rotate(0, 0, 90);
             }
         }
     }

@@ -48,7 +48,12 @@ public class DragDrop : MonoBehaviour
                 int layer = 1 << LayerMask.NameToLayer("Puzzle");
                 if(Physics.Raycast(ray, out hit))
                 {
-                    selectedPiece.transform.position = hit.point;
+                    if (!hit.transform.GetComponent<PiecesScripts>().InRightPosition)
+                    {
+                        selectedPiece = hit.transform.gameObject;
+                        //selectedPiece.GetComponent<PiecesScripts>().Selected = true;
+                        
+                    }
                 }
             }
         }
