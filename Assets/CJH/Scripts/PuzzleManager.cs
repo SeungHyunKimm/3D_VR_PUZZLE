@@ -67,10 +67,10 @@ public class PuzzleManager : MonoBehaviour
         dist = Vector3.Distance(transform.position, center.transform.position);
         transform.forward = center.transform.position - transform.position;
 
-        if (dist <= 20)
+        if (dist <= 40)
         {
             dir = transform.forward + transform.right;
-            rigid.AddForce(dir * 0.02f, ForceMode.Impulse);
+            rigid.AddForce(dir * 0.005f, ForceMode.Impulse);
         }
         else
         {
