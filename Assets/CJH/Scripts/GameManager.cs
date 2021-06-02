@@ -54,29 +54,29 @@ public class GameManager : MonoBehaviour
                 Shot();
 
             if (pr == null) return;
-                if (pr.state != PuzzleManager.PuzzleState.Catch)
-                    preView[preViewIndex].SetActive(false);
+            if (pr.state != PuzzleManager.PuzzleState.Catch)
+                preView[preViewIndex].SetActive(false);
 
-                if (Input.GetMouseButtonDown(1))                //왼손
-                    preView[preViewIndex].SetActive(true);
-                else if (Input.GetMouseButtonUp(1))                //지정 된 위치로 물체 보내기 및 프리뷰 비활성화
+            if (Input.GetMouseButtonDown(1))                //왼손
+                preView[preViewIndex].SetActive(true);
+            else if (Input.GetMouseButtonUp(1))                //지정 된 위치로 물체 보내기 및 프리뷰 비활성화
+            {
+                if (pr.state == PuzzleManager.PuzzleState.Catch)
                 {
-                    if (pr.state == PuzzleManager.PuzzleState.Catch)
-                    {
-                        pr.state = PuzzleManager.PuzzleState.Fusion;
-                        Vector3 dir = preView[preViewIndex].transform.position - rigid.transform.position;
-                        pr.Move(dir, Speed);
-                    }
-                    preView[preViewIndex].SetActive(false);
-                    pr = null;
+                    pr.state = PuzzleManager.PuzzleState.Fusion;
+                    Vector3 dir = preView[preViewIndex].transform.position - rigid.transform.position;
+                    pr.Move(dir, Speed);
                 }
+                preView[preViewIndex].SetActive(false);
+                pr = null;
+            }
 
-                if (hit.transform.gameObject.name == "Canvas")  //프리뷰 생성 위치 지정 캔버스 한정
-                {
-                    int x = (int)hit.point.x;
-                    int y = (int)hit.point.y;
-                    preView[preViewIndex].transform.position = new Vector2(x, y);
-                }
+            if (hit.transform.gameObject.name == "Canvas")  //프리뷰 생성 위치 지정 캔버스 한정
+            {
+                int x = (int)hit.point.x;
+                int y = (int)hit.point.y;
+                preView[preViewIndex].transform.position = new Vector2(x, y);
+            }
         }
         if (pr == null) return;
         if (pr.state == PuzzleManager.PuzzleState.Revolution) return;
@@ -111,8 +111,11 @@ public class GameManager : MonoBehaviour
         {
             if (preView[i].name == go.name)     //프리뷰 인덱스 저장 및 Catch상태로 변환 
             {
-                if (preView[preViewIndex].name != go.transform.gameObject.name && pr != null && pr.state == PuzzleManager.PuzzleState.Catch)
+                if (preView[preViewIndex].name != go.transform.gameObject.name && pr != null)
+                {
+                    if(pr.state == PuzzleManager.PuzzleState.Catch || pr.state == PuzzleManager.PuzzleState.Control)
                     pr.state = PuzzleManager.PuzzleState.Revolution;
+                }
                 rigid = go.transform.GetComponent<Rigidbody>();
                 pr = go.transform.GetComponent<PuzzleManager>();
                 pr.state = PuzzleManager.PuzzleState.Catch;

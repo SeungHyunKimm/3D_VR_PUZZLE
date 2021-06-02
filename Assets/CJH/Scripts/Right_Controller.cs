@@ -69,7 +69,7 @@ public class Right_Controller : MonoBehaviour
         }
 
         if (pr == null) return;
-        if (pr.state == PuzzleManager.PuzzleState.Revolution) return;
+        if (pr.state == PuzzleManager.PuzzleState.Revolution)return;
         if (OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch))
         {
             pr.state = PuzzleManager.PuzzleState.Control;
@@ -114,15 +114,12 @@ public class Right_Controller : MonoBehaviour
             {
                 if (hit.transform.name == "Canvas")                  //캔퍼스일 때 프리 뷰 생성
                 {
-                    preView[preViewIndex].SetActive(true);
-
                     int x = (int)hit.point.x;
                     int y = (int)hit.point.y;
+                    preView[preViewIndex].SetActive(true);
 
                     preView[preViewIndex].transform.position = new Vector2(x, y);
                 }
-                else
-                    preView[preViewIndex].SetActive(false);
             }
             else if (OVRInput.GetUp(OVRInput.Button.Two, OVRInput.Controller.RTouch))
             {
@@ -163,10 +160,7 @@ public class Right_Controller : MonoBehaviour
 
     void Start_Select_RightController()         // Start & Select Mode 오른손 컨트롤러
     {
-
-       
         OnClickButtonUI();
-
     }
 
     void Shot()
@@ -206,6 +200,7 @@ public class Right_Controller : MonoBehaviour
         {
             lr.SetPosition(0, transform.position);
             lr.SetPosition(1, transform.position + transform.forward * 1);
+            preView[preViewIndex].SetActive(false);
         }
     }
 
