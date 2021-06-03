@@ -23,6 +23,8 @@ public class Right_Controller : MonoBehaviour
     GameObject SelectObj; // 선택한 놈 (승현)
     //클릭한 상태
     bool isClick;
+    //스타트캔버스
+    public GameObject StartCanvas;
 
     void Start()
     {
@@ -57,7 +59,7 @@ public class Right_Controller : MonoBehaviour
 
     void ModeA_RightController()                             //A 모드 오른손 컨트롤러
     {
-        
+
         ray = new Ray(transform.position, transform.forward);
 
         if (Physics.Raycast(ray, out hit, 100))
@@ -138,14 +140,14 @@ public class Right_Controller : MonoBehaviour
     void ModeC_RightController()            //C 모드 오른손 컨트롤러
     {
 
-       
+
         CatchObj();
 
     }
     void ModeD_RightController()            //D 모드 오른손 컨트롤러
     {
 
-      
+
         CatchObj();
 
     }
@@ -153,7 +155,7 @@ public class Right_Controller : MonoBehaviour
     void Start_Select_RightController()         // Start & Select Mode 오른손 컨트롤러
     {
 
-       
+
         OnClickButtonUI();
 
     }
@@ -229,7 +231,21 @@ public class Right_Controller : MonoBehaviour
             {
                 ButtonManager.instance.OnClickMode_D();
             }
+
+
+
         }
+
+        if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+        {
+            print(hit.transform.gameObject.name);
+            //Saturn 행성을 클릭해서 StartScene을 활성화 하고 싶다.
+            if (hit.transform.gameObject.name.Contains("Saturn"))
+            {
+                StartCanvas.SetActive(true);
+            }
+        }
+
     }
 
     void CatchObj()
@@ -268,7 +284,7 @@ public class Right_Controller : MonoBehaviour
             {
                 print("isClick");
                 SelectObj = hit.transform.gameObject;
-                
+
 
             }
         }
@@ -276,27 +292,27 @@ public class Right_Controller : MonoBehaviour
         {
             isClick = false;
         }
-        if(isClick == true && SelectObj != null)
+        if (isClick == true && SelectObj != null)
         {
             ray = new Ray(transform.position, transform.forward);
             int layer = 1 << LayerMask.NameToLayer("Puzzle");
-            if(Physics.Raycast(ray, out hit, 100, layer))
+            if (Physics.Raycast(ray, out hit, 100, layer))
             {
                 SelectObj.transform.position = hit.point;
                 //hit.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-               
+
             }
         }
         //문제는 오래 쥐고 있을 수록 퍼즐조각이 앞으로 다가와진다.
 
         if (OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch))
         {
-            
+
         }
         if (OVRInput.Get(OVRInput.Button.Two, OVRInput.Controller.RTouch))
         {
 
-            
+
         }
 
     }
