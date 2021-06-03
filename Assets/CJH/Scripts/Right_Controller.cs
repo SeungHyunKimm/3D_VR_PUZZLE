@@ -132,7 +132,6 @@ public class Right_Controller : MonoBehaviour
     void ModeB_RightController()            //B 모드 오른손 컨트롤러
     {
 
-        
         CatchObj();
 
     }

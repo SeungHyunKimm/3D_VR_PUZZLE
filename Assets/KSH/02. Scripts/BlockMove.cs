@@ -43,7 +43,7 @@ public class BlockMove : MonoBehaviour
         //반복문 100개를 돌린다
         for (int i = 0; i < 10; i++) // 0 -> 9
         {
-            for (int j = 0; j < 10; j++)
+            for (int j = 0; j < 10; j++) // 0 -> 9
             {
                 //x,y 좌표값을 담을 변수 index
                 int index = ((i + j) + 9 * i);
@@ -69,20 +69,25 @@ public class BlockMove : MonoBehaviour
         }
     }
 
-    void ColorAnswer(int index)
-    {
-        //if(index.t)
+    //void ColorAnswer(int index)
+    //{
+    //    //if(index.t)
 
-    }
+    //}
 
 
     void OnClickRTouch()
     {
-        Ray ray = new Ray(transform.position, transform.forward);
+        //VR용
+        //Ray ray = new Ray(transform.position, transform.forward);
+        //마우스클릭용
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
         RaycastHit hit;
+
         if (Physics.Raycast(ray, out hit))
         {
-            if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+            if (Input.GetMouseButtonDown(0) || OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
             {
                 if (cnt == 0)
                 {
@@ -94,20 +99,18 @@ public class BlockMove : MonoBehaviour
                 {
                     //클릭한 놈 x,y값 지역변수 선언
 
-                    int x = (int)hit.transform.position.x;
-                    int y = (int)hit.transform.position.y;
+                    //int x = (int)hit.transform.position.x;
+                    //int y = (int)hit.transform.position.y;
 
 
-                    //만약 grid [x,y]값의 이름이 마우스 클릭한 놈의 이름이 같다면
-                    if (grid[x, y].transform.gameObject.name == hit.transform.gameObject.name)
-                    {
-                        print(grid[x,y].transform.gameObject.name);
+                    //만약 grid[x, y]값의 이름이 마우스 클릭한 놈의 이름이 같다면
+                    //if (grid[x, y].transform.gameObject.name == hit.transform.gameObject.name)
+                    //{
+                    //print(grid[x, y].transform.gameObject.name);
 
-                        //정답처리를 한다.
-                        
+                    //정답처리를 한다.
 
-
-                    }
+                    //}
 
                     Position2 = hit.transform.gameObject;
                     Vector3 temp = Position1.transform.position;

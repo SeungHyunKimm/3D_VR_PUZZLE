@@ -7,7 +7,7 @@ public class PictureMove : MonoBehaviour
     public GameObject[] Pics;
     public Quaternion rot;
     public Transform[] Pictures_Angle;
-
+    
 
     void Start()
     {
@@ -23,6 +23,9 @@ public class PictureMove : MonoBehaviour
         AnswerClear();
 
     }
+
+    
+
     void MovePic()
     {
         //6개의 사진의 각도를 1번만 90, 180, 270 세 가지 중에 하나로 각각 바꿔서 적용하고 싶다.
