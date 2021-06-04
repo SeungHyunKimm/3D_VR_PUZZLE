@@ -15,13 +15,13 @@ public class PiecesScripts : MonoBehaviour
 
     void Update()
     {
-        if(Vector3.Distance(transform.position, rightposition) > 30f)
+        if(Vector3.Distance(transform.position, rightposition) < 1f)
         {
-            if (!Selected)
-            {
+        //    if (!Selected)
+        //    {
             transform.position = rightposition;
-            InRightPosition = true;
-            }
+        //    InRightPosition = true;
+        //    }
         }
     }
 }
