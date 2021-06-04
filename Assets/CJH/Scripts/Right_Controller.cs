@@ -25,11 +25,18 @@ public class Right_Controller : MonoBehaviour
     bool isClick;
     //스타트캔버스
     public GameObject StartCanvas;
+    //행성들
+    public GameObject Star;
+    //스타트 화면을 놓을 변수
+    public GameObject Scene_Start;
+
 
     void Start()
     {
         lr = GetComponent<LineRenderer>();
         es = shot.GetComponent<EffectSettings>();
+
+
     }
 
     void Update()
@@ -73,17 +80,17 @@ public class Right_Controller : MonoBehaviour
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B 버튼
         if (ButtonManager.instance.settingUI.activeSelf && v > 0)
         {
-            if (hit.transform.gameObject.name.Contains("Cancle"))
+            if (hit.transform.gameObject.name.Contains("Resume"))
             {
-                ButtonManager.instance.OnClickCancle();
+                ButtonManager.instance.OnClickResume();
             }
             if (hit.transform.gameObject.name.Contains("Retry"))
             {
                 ButtonManager.instance.OnClickRetry();
             }
-            if (hit.transform.gameObject.name.Contains("Other"))
+            if (hit.transform.gameObject.name.Contains("SelectMode"))
             {
-                ButtonManager.instance.OnClickOther();
+                ButtonManager.instance.OnClickSelectMode();
             }
             return;
         } // 만약 메뉴창이 활성화되고 Trigger버튼을 누르고 있지 않으면
@@ -134,19 +141,17 @@ public class Right_Controller : MonoBehaviour
     void ModeB_RightController()            //B 모드 오른손 컨트롤러
     {
 
-        CatchObj();
+        CatchObj_B();
 
     }
     void ModeC_RightController()            //C 모드 오른손 컨트롤러
     {
-
 
         CatchObj();
 
     }
     void ModeD_RightController()            //D 모드 오른손 컨트롤러
     {
-
 
         CatchObj();
 
@@ -205,12 +210,8 @@ public class Right_Controller : MonoBehaviour
         ray = new Ray(transform.position, transform.forward);
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B 버튼
 
-
-
         if (v > 0)
         {
-            //int layer = 1 << LayerMask.NameToLayer("UI");
-            //if (Physics.Raycast(ray, out hit, 1000, layer))
             if (hit.transform.gameObject.name.Contains("StartButton"))
             {
                 ButtonManager.instance.OnClickStart();
@@ -231,9 +232,6 @@ public class Right_Controller : MonoBehaviour
             {
                 ButtonManager.instance.OnClickMode_D();
             }
-
-
-
         }
 
         if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
@@ -242,9 +240,33 @@ public class Right_Controller : MonoBehaviour
             //Saturn 행성을 클릭해서 StartScene을 활성화 하고 싶다.
             if (hit.transform.gameObject.name.Contains("Saturn"))
             {
+                //행성들 다 사라지게 한다.
+                Star.SetActive(false);
                 StartCanvas.SetActive(true);
+                StartCanvas.transform.position = Scene_Start.transform.position;
             }
         }
+        //A,B,C,D에 아이트윈효과를 넣기 위한 코드(실패)
+        //if(v < 0)
+        //{
+        //    if (hit.transform.gameObject.name.Contains("A_Mode"))
+        //    {
+        //        iTween.RotateBy(hit.transform.gameObject, iTween.Hash("x", .25, iTween.EaseType.easeInBounce, iTween.LoopType.pingPong, "delay", 4));
+        //    }
+        //    if (hit.transform.gameObject.name.Contains("B_Mode"))
+        //    {
+        //        iTween.RotateBy(hit.transform.gameObject, iTween.Hash("x", .25, iTween.EaseType.easeInBounce, iTween.LoopType.pingPong, "delay", 4));
+        //    }
+        //    if (hit.transform.gameObject.name.Contains("C_Mode"))
+        //    {
+        //        iTween.RotateBy(hit.transform.gameObject, iTween.Hash("x", .25, iTween.EaseType.easeInBounce, iTween.LoopType.pingPong, "delay", 4));
+        //    }
+        //    if (hit.transform.gameObject.name.Contains("D_Mode"))
+        //    {
+        //        iTween.RotateBy(hit.transform.gameObject, iTween.Hash("x", .25, iTween.EaseType.easeInBounce, iTween.LoopType.pingPong, "delay", 4));
+        //    }
+        //}
+
 
     }
 
@@ -260,21 +282,20 @@ public class Right_Controller : MonoBehaviour
 
         if (ButtonManager.instance.settingUI.activeSelf && v > 0)
         {
-            if (hit.transform.gameObject.name.Contains("Cancle"))
+            if (hit.transform.gameObject.name.Contains("Resume"))
             {
-                ButtonManager.instance.OnClickCancle();
+                ButtonManager.instance.OnClickResume();
             }
             if (hit.transform.gameObject.name.Contains("Retry"))
             {
                 ButtonManager.instance.OnClickRetry();
             }
-            if (hit.transform.gameObject.name.Contains("Other"))
+            if (hit.transform.gameObject.name.Contains("SelectMode"))
             {
-                ButtonManager.instance.OnClickOther();
+                ButtonManager.instance.OnClickSelectMode();
             }
             return;
         }
-
 
         if (v > 0)
         {
@@ -284,37 +305,64 @@ public class Right_Controller : MonoBehaviour
             {
                 print("isClick");
                 SelectObj = hit.transform.gameObject;
-
-
             }
         }
+
         else if (v < 0)
         {
             isClick = false;
         }
+
         if (isClick == true && SelectObj != null)
         {
-            ray = new Ray(transform.position, transform.forward);
+
             int layer = 1 << LayerMask.NameToLayer("Puzzle");
             if (Physics.Raycast(ray, out hit, 100, layer))
             {
                 SelectObj.transform.position = hit.point;
+                //레이로 잡고있는 물체의 z축의 이동을 막고 싶다.
                 //hit.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-
             }
         }
         //문제는 오래 쥐고 있을 수록 퍼즐조각이 앞으로 다가와진다.
+    }
 
-        if (OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch))
+    void CatchObj_B()
+    {
+        ray = new Ray(transform.position, transform.forward);
+        int layer1 = 1 << LayerMask.NameToLayer("Puzzle");
+        
+        if (Physics.Raycast(ray, out hit, 100, layer1))
         {
+            if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+            {
+                //B번 물체
+                print("rotate complete");
+                hit.transform.Rotate(0, 0, 45);
 
+            }
         }
-        if (OVRInput.Get(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+
+        float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
+        if (ButtonManager.instance.settingUI.activeSelf && v > 0)
         {
-
-
+            print("dd");
+            if (hit.transform.gameObject.name.Contains("Resume"))
+            {
+                ButtonManager.instance.OnClickResume();
+            }
+            if (hit.transform.gameObject.name.Contains("Retry"))
+            {
+                ButtonManager.instance.OnClickRetry();
+            }
+            if (hit.transform.gameObject.name.Contains("SelectMode"))
+            {
+                ButtonManager.instance.OnClickSelectMode();
+            }
+            return;
         }
-
+        //선택한 놈의 레이어가 UI이면 트리거 선택이 되게끔 하자.
+  
     }
 
     void DropObj()
@@ -342,8 +390,5 @@ public class Right_Controller : MonoBehaviour
         Rigidbody rb = catchObj.GetComponent<Rigidbody>();
         //조이스틱 오른쪽 + 던지는 힘 = 블록을 앞으로 던지게끔 효과를 내보자
         rb.velocity = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch) * throwPower;
-
     }
-
-
 }

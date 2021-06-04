@@ -19,6 +19,16 @@ public class BlockMove : MonoBehaviour
     //그리드 값 받을 변수
     Transform blockPos1;
 
+    GameObject click1;
+    GameObject click2;
+
+
+
+    Ray ray;
+    RaycastHit hit;
+
+   
+
 
     void Start()
     {
@@ -34,6 +44,31 @@ public class BlockMove : MonoBehaviour
 
         OnClickRTouch();
 
+        //OnClickItween();
+
+    }
+
+
+
+    void OnClickItween()
+    {
+        ray = new Ray(transform.position, transform.forward);
+
+        if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+        {
+            
+            iTween.MoveBy(hit.transform.gameObject, iTween.Hash("y", -5,"time", 2, iTween.EaseType.easeInBounce));
+            cnt++;
+
+        }
+
+        if( cnt == 2)
+        {
+            
+            iTween.MoveBy(hit.transform.gameObject, iTween.Hash("y", -5, "time", 2, iTween.EaseType.easeInBounce));
+            cnt = 0;
+
+        }
     }
 
     void SetGrid()
@@ -69,21 +104,13 @@ public class BlockMove : MonoBehaviour
         }
     }
 
-    //void ColorAnswer(int index)
-    //{
-    //    //if(index.t)
-
-    //}
-
 
     void OnClickRTouch()
     {
         //VR용
-        //Ray ray = new Ray(transform.position, transform.forward);
+        ray = new Ray(transform.position, transform.forward);
         //마우스클릭용
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        RaycastHit hit;
+        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         if (Physics.Raycast(ray, out hit))
         {
@@ -97,21 +124,7 @@ public class BlockMove : MonoBehaviour
 
                 else if (cnt == 1)
                 {
-                    //클릭한 놈 x,y값 지역변수 선언
-
-                    //int x = (int)hit.transform.position.x;
-                    //int y = (int)hit.transform.position.y;
-
-
-                    //만약 grid[x, y]값의 이름이 마우스 클릭한 놈의 이름이 같다면
-                    //if (grid[x, y].transform.gameObject.name == hit.transform.gameObject.name)
-                    //{
-                    //print(grid[x, y].transform.gameObject.name);
-
-                    //정답처리를 한다.
-
-                    //}
-
+                    //클릭한 블록 변수 1,2로 나누어 담고 Shuffle
                     Position2 = hit.transform.gameObject;
                     Vector3 temp = Position1.transform.position;
                     Position1.transform.position = Position2.transform.position;

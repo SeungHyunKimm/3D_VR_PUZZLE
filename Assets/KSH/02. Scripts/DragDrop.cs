@@ -8,58 +8,75 @@ public class DragDrop : MonoBehaviour
     bool isClick;
     Ray ray;
     RaycastHit hit;
-    
+    LineRenderer lr;
+
     void Start()
     {
+        lr = GetComponent<LineRenderer>();
 
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(1))
+        DrawGuideLine();
+        ObjectRay();
+
+
+
+    }
+
+    void ObjectRay()
+    {
+        ray = new Ray(transform.position, transform.forward);
+        float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
+        if (v > 0)
         {
             isClick = true;
-            selectedPiece = null;
-            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            
-
-            if (Physics.Raycast(ray, out hit))
+            //selectedPiece = null;
+            if (Physics.Raycast(ray, out hit, 100))
             {
-
                 print(hit.transform.gameObject);
-                for (int i = 0; i < 37; i++)
+                selectedPiece = hit.transform.gameObject;
+                for (int i = 0; i < 36; i++)
                 {
-                    if (hit.transform.gameObject.name == ("Pieces_("+i+ ")"))
+                    int layer = 1 << LayerMask.NameToLayer("Puzzle");
+                    if (Physics.Raycast(ray, out hit, 100, layer))
                     {
-                        print(hit.transform.gameObject.name);
-                        selectedPiece = hit.transform.gameObject;
+
+                        //print(selectedPiece);
+                        
+                        selectedPiece.transform.position = new Vector2(hit.point.x, hit.point.y);
+
+
+                                               //트리거 당긴 넘의 z축을 이동하지 않게 하고 싶다.
+
                     }
                 }
                 //마우스 우클릭을 했을때 
                 //클릭한 놈의 GameObject를 움직일 수 있게 하자
             }
-
-            else if (Input.GetMouseButtonUp(1))
-            {
-                isClick = false;
-            }
-
-            if (isClick == true && selectedPiece != null)
-            {
-                ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                int layer = 1 << LayerMask.NameToLayer("Puzzle");   
-                if(Physics.Raycast(ray, out hit))
-                {
-                    if (!hit.transform.GetComponent<PiecesScripts>().InRightPosition)
-                    {
-                        selectedPiece = hit.transform.gameObject;
-                        selectedPiece.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
-                        //selectedPiece.GetComponent<PiecesScripts>().Selected = true;
-                    }
-                }
-            }
         }
 
+        else if (v < 0)
+        {
+            isClick = false;
+        }
+    }
+
+    void DrawGuideLine()
+    {
+        //레이와 부딪힌 놈까지
+        if (Physics.Raycast(ray, out hit))
+        {
+            //거리를 구해서 라인을 그린다.
+            lr.SetPosition(0, transform.position);
+            lr.SetPosition(1, hit.point);
+        }
+        else
+        {
+            lr.SetPosition(0, transform.position);
+            lr.SetPosition(1, transform.position + transform.forward * 1);
+        }
     }
 }
 
@@ -69,8 +86,4 @@ public class DragDrop : MonoBehaviour
 
 
 
-
-
-//현재 문제(21.06.02)
-//1. 마우스로 클릭을 했는데 드래그와 움직이기가 안되고 클릭시 정답위치로 퍼즐이 순간이동한다.
 

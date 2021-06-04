@@ -22,10 +22,12 @@ public class ButtonManager : MonoBehaviour
 
     private void Awake()
     {
+
         instance = this;
+
     }
 
-    public void OnClickCancle()           //나가기
+    public void OnClickResume()           //나가기
     {
         settingUI.SetActive(false);
     }
@@ -37,12 +39,20 @@ public class ButtonManager : MonoBehaviour
 
     }
 
-    public void OnClickOther()            //다른 목록보기
+    public void OnClickSelectMode()            //다른 목록보기
     {
         
         SceneManager.LoadScene(1);
 
     }
+
+    public void OnClickExitGame()               //게임 종료
+    {
+
+        Application.Quit();
+
+    }
+
 
     public void OnClickStart()      //클릭시 스타트
     {
