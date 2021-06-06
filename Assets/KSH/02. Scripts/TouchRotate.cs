@@ -5,8 +5,8 @@ using UnityEngine;
 public class TouchRotate : MonoBehaviour
 {
 
-    Ray ray;
-    RaycastHit hit;
+    //Ray ray;
+    //RaycastHit hit;
 
     void Start()
     {

@@ -20,9 +20,6 @@ public class DragDrop : MonoBehaviour
     {
         DrawGuideLine();
         ObjectRay();
-
-
-
     }
 
     void ObjectRay()
@@ -42,14 +39,8 @@ public class DragDrop : MonoBehaviour
                     int layer = 1 << LayerMask.NameToLayer("Puzzle");
                     if (Physics.Raycast(ray, out hit, 100, layer))
                     {
-
                         //print(selectedPiece);
-                        
-                        selectedPiece.transform.position = new Vector2(hit.point.x, hit.point.y);
-
-
-                                               //트리거 당긴 넘의 z축을 이동하지 않게 하고 싶다.
-
+                        selectedPiece.transform.position = new Vector2(hit.point.x, hit.point.y);                    //트리거 당긴 넘의 z축을 이동하지 않게 하고 싶다.
                     }
                 }
                 //마우스 우클릭을 했을때 

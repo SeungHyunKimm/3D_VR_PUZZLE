@@ -17,11 +17,7 @@ public class PiecesScripts : MonoBehaviour
     {
         if(Vector3.Distance(transform.position, rightposition) < 1f)
         {
-        //    if (!Selected)
-        //    {
             transform.position = rightposition;
-        //    InRightPosition = true;
-        //    }
         }
     }
 }

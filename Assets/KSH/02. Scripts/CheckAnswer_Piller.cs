@@ -17,8 +17,8 @@ public class CheckAnswer_Piller : MonoBehaviour
     public GameObject[] Black;
     //블럭 개수
     int block_number = 10;
-    //카운트
-    int cnt = 0;
+    //충돌 체크 카운트
+    int collision_cnt = 0;
  
 
 
@@ -40,9 +40,9 @@ public class CheckAnswer_Piller : MonoBehaviour
         {
 
             print(collision.gameObject.name);
-            
-        }
 
+
+        }
     }
 
 

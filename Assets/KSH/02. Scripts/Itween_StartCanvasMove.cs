@@ -10,9 +10,5 @@ public class Itween_StartCanvasMove : MonoBehaviour
                 iTween.MoveBy(gameObject, iTween.Hash("x", 250, "time", 2, "easetype", iTween.EaseType.easeOutCirc));
 
     }
-
-    void Update()
-    {
-        
-    }
+    
 }

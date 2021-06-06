@@ -7,6 +7,8 @@ public class PlayerMove : MonoBehaviour
     //플레이어 속도
     public float speed = 3;
     public float rotateSpeed = 3;
+    Ray ray;
+    RaycastHit hit;
     void Start()
     {
 
@@ -35,7 +37,8 @@ public class PlayerMove : MonoBehaviour
 
     void LController()
     {
-        if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch))
+        ray = new Ray(transform.position, transform.forward);
+        if (Physics.Raycast(ray, out hit)&&OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch))
         {
             print("L Controller Y Button is activated");
             ButtonManager.instance.settingUI.SetActive(true);

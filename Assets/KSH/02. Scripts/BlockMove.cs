@@ -27,7 +27,7 @@ public class BlockMove : MonoBehaviour
     Ray ray;
     RaycastHit hit;
 
-   
+
 
 
     void Start()
@@ -44,32 +44,12 @@ public class BlockMove : MonoBehaviour
 
         OnClickRTouch();
 
-        //OnClickItween();
+ 
 
     }
 
 
 
-    void OnClickItween()
-    {
-        ray = new Ray(transform.position, transform.forward);
-
-        if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
-        {
-            
-            iTween.MoveBy(hit.transform.gameObject, iTween.Hash("y", -5,"time", 2, iTween.EaseType.easeInBounce));
-            cnt++;
-
-        }
-
-        if( cnt == 2)
-        {
-            
-            iTween.MoveBy(hit.transform.gameObject, iTween.Hash("y", -5, "time", 2, iTween.EaseType.easeInBounce));
-            cnt = 0;
-
-        }
-    }
 
     void SetGrid()
     {
@@ -137,4 +117,7 @@ public class BlockMove : MonoBehaviour
             }
         }
     }
+
+    //iTween.MoveBy(gameObject, iTween.Hash("y", -5, "time", 2.5f, iTween.EaseType.easeInBounce));
+    //        iTween.MoveBy(gameObject, iTween.Hash("y", 5, "time", 2.5f, iTween.EaseType.easeInBounce));
 }

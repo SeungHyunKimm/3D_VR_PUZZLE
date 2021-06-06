@@ -12,8 +12,7 @@ public class Itween_BlockMove : MonoBehaviour
         {
 
             isClick = true;
-            iTween.MoveBy(gameObject, iTween.Hash("y", -5, "time", 2.5f, iTween.EaseType.easeInBounce));
-            iTween.MoveBy(gameObject, iTween.Hash("y", 5, "time", 2.5f, iTween.EaseType.easeInBounce));
+            
 
         }
     }
@@ -26,4 +25,5 @@ public class Itween_BlockMove : MonoBehaviour
 
         
     }
+    
 }

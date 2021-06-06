@@ -71,7 +71,6 @@ public class Right_Controller : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, 100))
         {
-
             PuzzleControl();
         }
     }
@@ -191,17 +190,22 @@ public class Right_Controller : MonoBehaviour
     }
     void DrawGuideLine()
     {
+        //ray = new Ray(transform.position, transform.forward);
         //레이와 부딪힌 놈까지
         if (Physics.Raycast(ray, out hit))
         {
             //거리를 구해서 라인을 그린다.
             lr.SetPosition(0, transform.position);
             lr.SetPosition(1, hit.point);
+            RotateButton(hit.transform.gameObject);
+            
         }
         else
         {
             lr.SetPosition(0, transform.position);
             lr.SetPosition(1, transform.position + transform.forward * 1);
+            RotateButton(null);
+            
         }
     }
 
@@ -210,7 +214,7 @@ public class Right_Controller : MonoBehaviour
         ray = new Ray(transform.position, transform.forward);
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B 버튼
 
-        if (v > 0)
+        if (v > 0 && Physics.Raycast(ray, out hit))
         {
             if (hit.transform.gameObject.name.Contains("StartButton"))
             {
@@ -246,29 +250,43 @@ public class Right_Controller : MonoBehaviour
                 StartCanvas.transform.position = Scene_Start.transform.position;
             }
         }
-        //A,B,C,D에 아이트윈효과를 넣기 위한 코드(실패)
-        //if(v < 0)
-        //{
-        //    if (hit.transform.gameObject.name.Contains("A_Mode"))
-        //    {
-        //        iTween.RotateBy(hit.transform.gameObject, iTween.Hash("x", .25, iTween.EaseType.easeInBounce, iTween.LoopType.pingPong, "delay", 4));
-        //    }
-        //    if (hit.transform.gameObject.name.Contains("B_Mode"))
-        //    {
-        //        iTween.RotateBy(hit.transform.gameObject, iTween.Hash("x", .25, iTween.EaseType.easeInBounce, iTween.LoopType.pingPong, "delay", 4));
-        //    }
-        //    if (hit.transform.gameObject.name.Contains("C_Mode"))
-        //    {
-        //        iTween.RotateBy(hit.transform.gameObject, iTween.Hash("x", .25, iTween.EaseType.easeInBounce, iTween.LoopType.pingPong, "delay", 4));
-        //    }
-        //    if (hit.transform.gameObject.name.Contains("D_Mode"))
-        //    {
-        //        iTween.RotateBy(hit.transform.gameObject, iTween.Hash("x", .25, iTween.EaseType.easeInBounce, iTween.LoopType.pingPong, "delay", 4));
-        //    }
-        //}
+
 
 
     }
+    GameObject focusBtn;
+    void RotateButton(GameObject btn)
+    {
+        if (btn == null || btn.name.Contains("Mode") == false)
+        {
+            if (focusBtn)
+            {
+                StopRotateButton();
+            }
+        }
+
+        else if (btn.name.Contains("Mode"))
+        {
+            if (focusBtn && focusBtn != btn)
+            {
+                StopRotateButton();
+            }
+            focusBtn = btn;
+            iTween.RotateBy(focusBtn.transform.GetChild(0).gameObject, iTween.Hash("x", .25, iTween.EaseType.easeInElastic, iTween.LoopType.pingPong, "name", btn.name));
+        }
+    }
+    void StopRotateButton()
+    {
+        iTween.StopByName(focusBtn.name);
+        focusBtn.transform.GetChild(0).transform.localEulerAngles = Vector3.zero;
+        focusBtn = null;
+    }
+
+
+
+
+
+
 
     void CatchObj()
     {
@@ -315,23 +333,19 @@ public class Right_Controller : MonoBehaviour
 
         if (isClick == true && SelectObj != null)
         {
-
             int layer = 1 << LayerMask.NameToLayer("Puzzle");
             if (Physics.Raycast(ray, out hit, 100, layer))
             {
                 SelectObj.transform.position = hit.point;
-                //레이로 잡고있는 물체의 z축의 이동을 막고 싶다.
-                //hit.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
             }
         }
-        //문제는 오래 쥐고 있을 수록 퍼즐조각이 앞으로 다가와진다.
     }
 
     void CatchObj_B()
     {
         ray = new Ray(transform.position, transform.forward);
         int layer1 = 1 << LayerMask.NameToLayer("Puzzle");
-        
+
         if (Physics.Raycast(ray, out hit, 100, layer1))
         {
             if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
@@ -339,14 +353,13 @@ public class Right_Controller : MonoBehaviour
                 //B번 물체
                 print("rotate complete");
                 hit.transform.Rotate(0, 0, 45);
-
             }
         }
 
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
-        if (ButtonManager.instance.settingUI.activeSelf && v > 0)
+
+        if (ButtonManager.instance.settingUI.activeSelf && v > 0 && Physics.Raycast(ray, out hit))
         {
-            print("dd");
             if (hit.transform.gameObject.name.Contains("Resume"))
             {
                 ButtonManager.instance.OnClickResume();
@@ -362,7 +375,7 @@ public class Right_Controller : MonoBehaviour
             return;
         }
         //선택한 놈의 레이어가 UI이면 트리거 선택이 되게끔 하자.
-  
+
     }
 
     void DropObj()
