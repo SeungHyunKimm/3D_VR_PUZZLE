@@ -7,11 +7,15 @@ public class BlockState_Manager : MonoBehaviour
 {
     void Start()
     {
+     
         
+
     }
 
     void Update()
     {
         
+
+
     }
 }
