@@ -7,7 +7,7 @@ public class GameControl : MonoBehaviour
     
     public Transform[] pictures;
     [SerializeField]
-    GameObject winText;
+    public GameObject winText;
     public static bool youWin;
     void Start()
     {
@@ -29,14 +29,14 @@ public class GameControl : MonoBehaviour
     }
     void Update()
     {
-        if (pictures[0].rotation.z == 0 &&
-            pictures[1].rotation.z == 0 &&
-            pictures[2].rotation.z == 0 &&
-            pictures[3].rotation.z == 0 &&
-            pictures[4].rotation.z == 0 &&
-            pictures[5].rotation.z == 0
-            )
+        if (pictures[0].transform.eulerAngles == new Vector3(0, 0, 0) &&  
+            pictures[1].transform.eulerAngles == new Vector3(0, 0, 0) &&
+            pictures[2].transform.eulerAngles == new Vector3(0, 0, 0) &&  
+            pictures[3].transform.eulerAngles == new Vector3(0, 0, 0) &&
+            pictures[4].transform.eulerAngles == new Vector3(0, 0, 0) &&  
+            pictures[5].transform.eulerAngles == new Vector3(0, 0, 0))
         {
+            print("모든 사진 완료");
             youWin = true;
             winText.SetActive(true);
         }

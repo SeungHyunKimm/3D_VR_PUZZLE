@@ -240,7 +240,7 @@ public class Right_Controller : MonoBehaviour
 
         if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
         {
-            print(hit.transform.gameObject.name);
+            //print(hit.transform.gameObject.name);
             //Saturn 행성을 클릭해서 StartScene을 활성화 하고 싶다.
             if (hit.transform.gameObject.name.Contains("Saturn"))
             {
@@ -279,13 +279,8 @@ public class Right_Controller : MonoBehaviour
     {
         iTween.StopByName(focusBtn.name);
         focusBtn.transform.GetChild(0).transform.localEulerAngles = Vector3.zero;
-        focusBtn = null;
+        //focusBtn = null;
     }
-
-
-
-
-
 
 
     void CatchObj()
@@ -352,7 +347,7 @@ public class Right_Controller : MonoBehaviour
             {
                 //B번 물체
                 print("rotate complete");
-                hit.transform.Rotate(0, 0, 45);
+                hit.transform.Rotate(0, 0, 90);
             }
         }
 

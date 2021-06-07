@@ -23,8 +23,6 @@ public class Itween_StartButtonMove : MonoBehaviour
 
     {
         yield return new WaitForSeconds(3);
-
-
         iTween.RotateBy(gameObject, iTween.Hash("x", .25, "easeType", "easeInOutBack", "loopType", "pingPong", "delay", .4));
 
     }
