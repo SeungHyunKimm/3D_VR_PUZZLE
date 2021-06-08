@@ -17,7 +17,11 @@ public class PlayerMove : MonoBehaviour
     }
 
     void Update()
+
+
     {
+
+        
         //왼쪽 조이스틱의 ThumbStick의 움직임을 Vector2로 가져오자
         Vector2 joystickL = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.LTouch);
         //dir을 왼쪽 조이스틱 상하좌우의 움직임을 받게 하자
