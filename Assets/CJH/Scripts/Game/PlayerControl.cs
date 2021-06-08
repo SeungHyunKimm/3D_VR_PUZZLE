@@ -142,7 +142,7 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
                 //    photonView.RPC("Catch", RpcTarget.All, hit.point, pv.ViewID);
                 //}
 
-                photonView.RPC("Catch", RpcTarget.All/*, hit.point, pv.ViewID*/);
+                photonView.RPC("Catch", RpcTarget.All , hit.transform.name);
                 //Shot();
                 //PuzzleChoiceChange(hit.transform.gameObject);
             }
@@ -259,7 +259,7 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
     }
 
     [PunRPC]
-    void Catch(/*Vector3 hitPoint, int viewId*/)
+    void Catch(string name)
     {
         //for (int i = 0; i < puzzles.Length; i++)
         //{
@@ -267,8 +267,7 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
         //    {
         for (int i = 0; i < preView.Length; i++)
         {
-            print(puzzles[i].name + preView[i].name + "   " + preView.Length);
-            if (preView[i].name == puzzles[i].name)     //프리뷰 인덱스 저장 및 Catch상태로 변환 
+            if (preView[i].name == name)     //프리뷰 인덱스 저장 및 Catch상태로 변환 
             {
                 if (preView[preViewIndex].name != puzzles[i].name && pr != null)
                 {
