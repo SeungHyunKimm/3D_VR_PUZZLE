@@ -8,7 +8,7 @@ public class Itween_ChooseModeScene : MonoBehaviour
     {
 
 
-        iTween.MoveBy(gameObject, iTween.Hash("x", -1000, "time", 2, "easetype", iTween.EaseType.easeOutCirc));
+        iTween.MoveBy(gameObject, iTween.Hash("x", -800, "time", 2, "easetype", iTween.EaseType.easeOutCirc));
 
 
 
