@@ -24,6 +24,7 @@ public class DragDrop : MonoBehaviour
 
     void DrawGuideLine()
     {
+        ray = new Ray(transform.position, transform.forward);
         //레이와 부딪힌 놈까지
         if (Physics.Raycast(ray, out hit))
         {
@@ -63,7 +64,6 @@ public class DragDrop : MonoBehaviour
                 //클릭한 놈의 GameObject를 움직일 수 있게 하자
             }
         }
-
         else if (v < 0)
         {
             isClick = false;
