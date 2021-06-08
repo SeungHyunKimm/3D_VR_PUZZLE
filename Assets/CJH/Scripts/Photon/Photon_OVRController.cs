@@ -34,6 +34,14 @@ public class Photon_OVRController : MonoBehaviourPun, IPunObservable
     int canvasIndex = 1;           //양면 캔퍼스 구분
     Vector3 otherpos;              //상대방 위치 값 받아오기
 
+    struct SyncData
+    {
+        public Vector3 pos;
+        public Quaternion rotation;
+    }
+
+    SyncData[] syncData;
+
     //Player Part 위치 각도 동기화
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
@@ -47,7 +55,14 @@ public class Photon_OVRController : MonoBehaviourPun, IPunObservable
             }
         }
         if (stream.IsReading)
+        {
             otherpos = (Vector3)stream.ReceiveNext();
+            for(int i = 0; i < otherBody.Length; i++)
+            {
+                syncData[i].pos = (Vector3)stream.ReceiveNext();
+                syncData[i].rotation = (Quaternion)stream.ReceiveNext();
+            }
+        }
     }
 
     private void Awake()
@@ -100,6 +115,16 @@ public class Photon_OVRController : MonoBehaviourPun, IPunObservable
 
     void Update()
     {
+        if (!photonView.IsMine)       //상대방 위치 셋팅 
+        {
+            transform.position = Vector3.Lerp(transform.position, otherpos, 0.05f);
+            for (int i = 0; i < otherBody.Length; i++)
+            {
+                otherBody[i].position = Vector3.Lerp(otherBody[i].transform.position, syncData[i].pos, 0.05f);
+                otherBody[i].rotation = Quaternion.Lerp(otherBody[i].transform.rotation, syncData[i].rotation, 0.05f);
+            }
+            return;
+        }
         ModeA_RightController();
         DrawGuideLine();
     }

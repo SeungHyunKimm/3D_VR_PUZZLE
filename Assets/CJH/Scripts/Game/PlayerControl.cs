@@ -30,6 +30,14 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
 
     //PhotonView[] puzzles;
     GameObject[] puzzles;
+
+    struct SyncData
+    {
+        public Vector3 pos;
+        public Quaternion rotation;
+    }
+
+    SyncData[] syncData;
     // Start is called before the first frame update
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
@@ -43,7 +51,14 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
             }
         }
         if (stream.IsReading)
+        {
             otherpos = (Vector3)stream.ReceiveNext();
+            for(int i = 0; i < otherBody.Length; i++)
+            {
+                syncData[i].pos = (Vector3)stream.ReceiveNext();
+                otherBody[i].rotation = (Quaternion)stream.ReceiveNext();
+            }
+        }
     }
     private void Awake()
     {
@@ -57,6 +72,9 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
     }
     void Start()
     {
+        if(photonView.IsMine == false)
+        syncData = new SyncData[myBody.Length];
+
         cv = new CanvasManager[2];
         //포톤 생성 및 셋팅
         my.SetActive(photonView.IsMine);            //포톤 활성 비활성
@@ -99,6 +117,11 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
         if (!photonView.IsMine)       //상대방 위치 셋팅 
         {
             transform.position = Vector3.Lerp(transform.position, otherpos, 0.05f);
+            for (int i = 0; i < otherBody.Length; i++)
+            {
+                otherBody[i].position = Vector3.Lerp(otherBody[i].transform.position, syncData[i].pos, 0.05f);
+                otherBody[i].rotation = Quaternion.Lerp(otherBody[i].transform.rotation, syncData[i].rotation, 0.05f);
+            }
             return;
         }
         switch (ButtonManager.instance.state)
