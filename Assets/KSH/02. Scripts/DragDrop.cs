@@ -64,6 +64,33 @@ public class DragDrop : MonoBehaviour
             }
         }
 
+
+        if (ButtonManager.instance.settingUI.activeSelf && v > 0)
+        {
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.transform.gameObject.name.Contains("Resume"))
+                {
+                    ButtonManager.instance.OnClickResume();
+                }
+                if (hit.transform.gameObject.name.Contains("Retry"))
+                {
+                    ButtonManager.instance.OnClickRetry();
+                }
+                if (hit.transform.gameObject.name.Contains("SelectMenu"))
+                {
+                    ButtonManager.instance.OnClickSelectMenu();
+                }
+                if (hit.transform.gameObject.name.Contains("ExitGame"))
+                {
+                    ButtonManager.instance.OnClickExitGame();
+                }
+                return;
+
+            }
+        }
+
+
         else if (v < 0)
         {
             isClick = false;
