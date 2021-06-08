@@ -109,9 +109,9 @@ public class PuzzleManager : MonoBehaviourPun//, IPunObservable
     void Fusion()                                     //판에 끼우기 전 x , y , z 각도를 0으로 맞춤 
     {
         int mix = (int)transform.eulerAngles.x + (int)transform.eulerAngles.y + (int)transform.eulerAngles.z;
-        if (state2 == PuzzleRot.Change && (int)transform.eulerAngles.z == pre_z) return;
         if (mix == 0)
             state2 = PuzzleRot.Change;
+        if (state2 == PuzzleRot.Change && (int)transform.eulerAngles.z == pre_z) return;
         switch (state2)
         {
             case PuzzleRot.Set:
@@ -121,7 +121,6 @@ public class PuzzleManager : MonoBehaviourPun//, IPunObservable
                 transform.Rotate(xyz[0] * 3, xyz[1] * 3, xyz[2] * 3);
                 break;
             case PuzzleRot.Change:
-                if (xyz[2] > pre_z) rotz *= -1;
                 transform.Rotate(0, 0, rotz);
                 break;
         }
@@ -140,11 +139,8 @@ public class PuzzleManager : MonoBehaviourPun//, IPunObservable
 
     public void Move(Vector3 dir, float Speed)
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            rigid.isKinematic = false;
-            rigid.AddForce(dir * Speed * Time.deltaTime, ForceMode.Impulse);
-        }
+        rigid.isKinematic = false;
+        rigid.AddForce(dir * Speed * Time.deltaTime, ForceMode.Impulse);
     }
 
 

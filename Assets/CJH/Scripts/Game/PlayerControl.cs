@@ -26,16 +26,20 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
     public GameObject camera;
     float rotX, rotY;
     int z = 0;
+    int playerPreViewIndex = 1;
 
-    PhotonView[] puzzles;
+    //PhotonView[] puzzles;
+    GameObject[] puzzles;
     // Start is called before the first frame update
     private void Awake()
     {
         GameObject puz = GameObject.Find("Puzzle");
-        puzzles = new PhotonView[puz.transform.childCount];
+        //puzzles = new PhotonView[puz.transform.childCount];
+        puzzles = new GameObject[puz.transform.childCount];
 
         for (int i = 0; i < puz.transform.childCount; i++)
-            puzzles[i] = puz.transform.GetChild(i).gameObject.GetComponent<PhotonView>();         //각 퍼즐들의 포톤 뷰 정보
+            //puzzles[i] = puz.transform.GetChild(i).gameObject.GetComponent<PhotonView>();         //각 퍼즐들의 포톤 뷰 정보
+            puzzles[i] = puz.transform.GetChild(i).gameObject;
     }
     void Start()
     {
@@ -54,6 +58,7 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
             transform.position = new Vector3(5, 5, -5);
             SetCanvas();
             z = 0;
+            playerPreViewIndex = 0;
         }
 
         GameObject pre = GameObject.Find("PreView");         //프리뷰 담기
@@ -127,15 +132,17 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
                 //{
                 //    photonView.RPC("Shot", RpcTarget.All, hit.point, pv.ViewID);
                 //}
-                PhotonView pv = hit.transform.GetComponent<PhotonView>();
-                if (pv == null)
-                {
-                    pv = hit.transform.parent.GetComponent<PhotonView>();
-                }
-                if (pv != null)
-                {
-                    photonView.RPC("Catch", RpcTarget.All, hit.point, pv.ViewID);
-                }
+                //PhotonView pv = hit.transform.GetComponent<PhotonView>();
+                //if (pv == null)
+                //{
+                //    pv = hit.transform.parent.GetComponent<PhotonView>();
+                //}
+                //if (pv != null)
+                //{
+                //    photonView.RPC("Catch", RpcTarget.All, hit.point, pv.ViewID);
+                //}
+
+                photonView.RPC("Catch", RpcTarget.All/*, hit.point, pv.ViewID*/);
                 //Shot();
                 //PuzzleChoiceChange(hit.transform.gameObject);
             }
@@ -152,20 +159,17 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
             }
             else if (Input.GetMouseButton(1))
             {
-
                 if (hit.transform.gameObject.name == "Canvas")  //프리뷰 생성 위치 지정 캔버스 한정
                 {
                     int x = (int)hit.point.x;
                     int y = (int)hit.point.y;
-
-                    preView[preViewIndex].transform.position = new Vector3(x, y, z);
+                    photonView.RPC("Fusion", RpcTarget.All, x, y);
                 }
             }
             else if (Input.GetMouseButtonUp(1))                //지정 된 위치로 물체 보내기 및 프리뷰 비활성화
             {
                 photonView.RPC("FusionUp", RpcTarget.All);
             }
-
         }
         if (pr == null) return;
         if (pr.state == PuzzleManager.PuzzleState.Revolution) return;
@@ -199,6 +203,12 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
     }
 
     [PunRPC]
+    void Fusion(int x, int y)
+    {
+        preView[preViewIndex].transform.position = new Vector3(x, y, z);
+    }
+
+    [PunRPC]
     void BlockMove(Vector3 dir)
     {
         pr.Move(dir, fusionSpeed);
@@ -218,7 +228,7 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
                 photonView.RPC("BlockMove", RpcTarget.All, dir);
             }
         }
-        preView[preViewIndex].SetActive(false);
+        PreViewClose();
     }
 
     [PunRPC]
@@ -242,39 +252,44 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
         pr.GetComponent<Rigidbody>().isKinematic = true;
         pr.state = PuzzleManager.PuzzleState.Catch;
     }
+    [PunRPC]
+    void PreViewClose()
+    {
+        preView[preViewIndex].SetActive(false);
+    }
 
     [PunRPC]
-    void Catch(Vector3 hitPoint, int viewId)
+    void Catch(/*Vector3 hitPoint, int viewId*/)
     {
-        for (int i = 0; i < puzzles.Length; i++)
+        //for (int i = 0; i < puzzles.Length; i++)
+        //{
+        //    if (viewId == puzzles[i].ViewID)
+        //    {
+        for (int i = 0; i < preView.Length; i++)
         {
-            if (viewId == puzzles[i].ViewID)
+            print(puzzles[i].name + preView[i].name + "   " + preView.Length);
+            if (preView[i].name == puzzles[i].name)     //프리뷰 인덱스 저장 및 Catch상태로 변환 
             {
-                for (int j = 0; j < preView.Length; j++)
+                if (preView[preViewIndex].name != puzzles[i].name && pr != null)
                 {
-                    if (preView[i].name == puzzles[i].name)     //프리뷰 인덱스 저장 및 Catch상태로 변환 
+                    if (pr.state == PuzzleManager.PuzzleState.Catch || pr.state == PuzzleManager.PuzzleState.Control)
                     {
-                        if (preView[preViewIndex].name != puzzles[i].name && pr != null)
-                        {
-                            if (pr.state == PuzzleManager.PuzzleState.Catch || pr.state == PuzzleManager.PuzzleState.Control)
-                                pr.state = PuzzleManager.PuzzleState.Revolution;
-                        }
-                        preViewIndex = i;
-                        pr = puzzles[i].GetComponent<PuzzleManager>();
-                        pr.state = PuzzleManager.PuzzleState.Catch;
-                        //cv.CatchToCheckBox(preViewIndex);
-                        puzzles[i].GetComponent<Rigidbody>().isKinematic = true; //멈추게 만들기
-                        puzzles[i].GetComponent<Rigidbody>().isKinematic = false;
-                        break;
+                        photonView.RPC("PreViewClose", RpcTarget.All);                //모든 PC에 프리 뷰 비활성화
+                        pr.state = PuzzleManager.PuzzleState.Revolution;
                     }
                 }
+                preViewIndex = i;
+                pr = puzzles[i].GetComponent<PuzzleManager>();
+                pr.state = PuzzleManager.PuzzleState.Catch;
+                cv[playerPreViewIndex].CatchToCheckBox(preViewIndex);
+                puzzles[i].GetComponent<Rigidbody>().isKinematic = true; //멈추게 만들기
+                puzzles[i].GetComponent<Rigidbody>().isKinematic = false;
                 break;
             }
         }
-
-
-
-
+        //break;
+        //    }
+        //}
         //shot.SetActive(true);
         //shot.transform.position = Camera.main.transform.position;
         //pos.transform.position = Camera.main.transform.position;

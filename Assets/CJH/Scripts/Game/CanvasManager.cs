@@ -47,8 +47,6 @@ public class CanvasManager : MonoBehaviourPun//, IPunObservable
 
     private void OnCollisionEnter(Collision collision)        //퍼즐이 캔버스에 끼워졌을 때 물리 작용 제거
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
             if (collision.transform.gameObject.layer == LayerMask.NameToLayer("Puzzle"))
             {
                 PuzzleManager pr = collision.transform.GetComponent<PuzzleManager>();
@@ -70,7 +68,6 @@ public class CanvasManager : MonoBehaviourPun//, IPunObservable
             }
             else
                 collision.rigidbody.AddForce(collision.transform.position - transform.position * -2 * Time.deltaTime, ForceMode.Impulse);
-        }
     }
 
     void CheckBox(GameObject puzzle)                                            //퍼즐을 붙였을 때 정답처리 여부
