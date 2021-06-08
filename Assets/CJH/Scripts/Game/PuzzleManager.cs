@@ -118,7 +118,7 @@ public class PuzzleManager : MonoBehaviourPun//, IPunObservable
                 xyz[0] = transform.rotation.x;
                 xyz[1] = transform.rotation.y;
                 xyz[2] = transform.rotation.z;
-                transform.Rotate(xyz[0] * 3, xyz[1] * 3, xyz[2] * 3);
+                transform.Rotate(xyz[0] * 5, xyz[1] * 5, xyz[2] * 5);
                 break;
             case PuzzleRot.Change:
                 transform.Rotate(0, 0, rotz);
@@ -139,10 +139,12 @@ public class PuzzleManager : MonoBehaviourPun//, IPunObservable
 
     public void Move(Vector3 dir, float Speed)
     {
-        rigid.isKinematic = false;
-        rigid.AddForce(dir * Speed * Time.deltaTime, ForceMode.Impulse);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            rigid.isKinematic = false;
+            rigid.AddForce(dir * Speed * Time.deltaTime, ForceMode.Impulse);
+        }
     }
-
 
     void Control()
     {
