@@ -6,7 +6,7 @@ using Photon.Pun;
 public class PlayerControl : MonoBehaviourPun, IPunObservable
 {
 
-    public Rigidbody rigid;
+    //public Rigidbody rigid;
     public int preViewIndex;                   //선택한 퍼즐의 인덱스
     public PuzzleManager pr;
     public CanvasManager[] cv;
@@ -142,7 +142,7 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
                 //    photonView.RPC("Catch", RpcTarget.All, hit.point, pv.ViewID);
                 //}
 
-                photonView.RPC("Catch", RpcTarget.All/*, hit.point, pv.ViewID*/);
+                photonView.RPC("Catch", RpcTarget.All/*, hit.point, pv.ViewID*/,hit.transform.name);
                 //Shot();
                 //PuzzleChoiceChange(hit.transform.gameObject);
             }
@@ -259,7 +259,7 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
     }
 
     [PunRPC]
-    void Catch(/*Vector3 hitPoint, int viewId*/)
+    void Catch(/*Vector3 hitPoint, int viewId*/string name)
     {
         //for (int i = 0; i < puzzles.Length; i++)
         //{
@@ -267,8 +267,7 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
         //    {
         for (int i = 0; i < preView.Length; i++)
         {
-            print(puzzles[i].name + preView[i].name + "   " + preView.Length);
-            if (preView[i].name == puzzles[i].name)     //프리뷰 인덱스 저장 및 Catch상태로 변환 
+            if (preView[i].name == name)     //프리뷰 인덱스 저장 및 Catch상태로 변환 
             {
                 if (preView[preViewIndex].name != puzzles[i].name && pr != null)
                 {
@@ -295,27 +294,27 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
         //pos.transform.position = Camera.main.transform.position;
         //es.Target = hit.transform.gameObject;
     }
-    public void PuzzleChoiceChange(GameObject go)                   //Shot 발사 후 Catch 상태로 전환
-    {
-        for (int i = 0; i < preView.Length; i++)
-        {
-            if (preView[i].name == go.name)     //프리뷰 인덱스 저장 및 Catch상태로 변환 
-            {
-                if (preView[preViewIndex].name != go.transform.gameObject.name && pr != null)
-                {
-                    if (pr.state == PuzzleManager.PuzzleState.Catch || pr.state == PuzzleManager.PuzzleState.Control)
-                        pr.state = PuzzleManager.PuzzleState.Revolution;
-                }
-                rigid = go.transform.GetComponent<Rigidbody>();
-                pr = go.transform.GetComponent<PuzzleManager>();
-                pr.state = PuzzleManager.PuzzleState.Catch;
-                rigid.isKinematic = true;
-                preViewIndex = i;
-                //cv.CatchToCheckBox(preViewIndex);
-                break;
-            }
-        }
-    }
+    //public void PuzzleChoiceChange(GameObject go)                   //Shot 발사 후 Catch 상태로 전환
+    //{
+    //    for (int i = 0; i < preView.Length; i++)
+    //    {
+    //        if (preView[i].name == go.name)     //프리뷰 인덱스 저장 및 Catch상태로 변환 
+    //        {
+    //            if (preView[preViewIndex].name != go.transform.gameObject.name && pr != null)
+    //            {
+    //                if (pr.state == PuzzleManager.PuzzleState.Catch || pr.state == PuzzleManager.PuzzleState.Control)
+    //                    pr.state = PuzzleManager.PuzzleState.Revolution;
+    //            }
+    //            rigid = go.transform.GetComponent<Rigidbody>();
+    //            pr = go.transform.GetComponent<PuzzleManager>();
+    //            pr.state = PuzzleManager.PuzzleState.Catch;
+    //            rigid.isKinematic = true;
+    //            preViewIndex = i;
+    //            //cv.CatchToCheckBox(preViewIndex);
+    //            break;
+    //        }
+    //    }
+    //}
 
     Vector3 otherpos;
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
