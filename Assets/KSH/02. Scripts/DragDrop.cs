@@ -24,7 +24,6 @@ public class DragDrop : MonoBehaviour
 
     void DrawGuideLine()
     {
-        ray = new Ray(transform.position, transform.forward);
         //레이와 부딪힌 놈까지
         if (Physics.Raycast(ray, out hit))
         {
@@ -64,6 +63,34 @@ public class DragDrop : MonoBehaviour
                 //클릭한 놈의 GameObject를 움직일 수 있게 하자
             }
         }
+
+
+        if (ButtonManager.instance.settingUI.activeSelf && v > 0)
+        {
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.transform.gameObject.name.Contains("Resume"))
+                {
+                    ButtonManager.instance.OnClickResume();
+                }
+                if (hit.transform.gameObject.name.Contains("Retry"))
+                {
+                    ButtonManager.instance.OnClickRetry();
+                }
+                if (hit.transform.gameObject.name.Contains("SelectMenu"))
+                {
+                    ButtonManager.instance.OnClickSelectMenu();
+                }
+                if (hit.transform.gameObject.name.Contains("ExitGame"))
+                {
+                    ButtonManager.instance.OnClickExitGame();
+                }
+                return;
+
+            }
+        }
+
+
         else if (v < 0)
         {
             isClick = false;
