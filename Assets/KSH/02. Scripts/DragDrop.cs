@@ -22,6 +22,22 @@ public class DragDrop : MonoBehaviour
         ObjectRay();
     }
 
+    void DrawGuideLine()
+    {
+        //레이와 부딪힌 놈까지
+        if (Physics.Raycast(ray, out hit))
+        {
+            //거리를 구해서 라인을 그린다.
+            lr.SetPosition(0, transform.position);
+            lr.SetPosition(1, hit.point);
+        }
+        else
+        {
+            lr.SetPosition(0, transform.position);
+            lr.SetPosition(1, transform.position + transform.forward * 1);
+        }
+    }
+
     void ObjectRay()
     {
         ray = new Ray(transform.position, transform.forward);
@@ -40,7 +56,7 @@ public class DragDrop : MonoBehaviour
                     if (Physics.Raycast(ray, out hit, 100, layer))
                     {
                         //print(selectedPiece);
-                        selectedPiece.transform.position = new Vector2(hit.point.x, hit.point.y);                    //트리거 당긴 넘의 z축을 이동하지 않게 하고 싶다.
+                        selectedPiece.transform.position = new Vector3(hit.point.x, hit.point.y, -0.1f);                    //트리거 당긴 넘의 z축을 이동하지 않게 하고 싶다.
                     }
                 }
                 //마우스 우클릭을 했을때 
@@ -51,22 +67,6 @@ public class DragDrop : MonoBehaviour
         else if (v < 0)
         {
             isClick = false;
-        }
-    }
-
-    void DrawGuideLine()
-    {
-        //레이와 부딪힌 놈까지
-        if (Physics.Raycast(ray, out hit))
-        {
-            //거리를 구해서 라인을 그린다.
-            lr.SetPosition(0, transform.position);
-            lr.SetPosition(1, hit.point);
-        }
-        else
-        {
-            lr.SetPosition(0, transform.position);
-            lr.SetPosition(1, transform.position + transform.forward * 1);
         }
     }
 }

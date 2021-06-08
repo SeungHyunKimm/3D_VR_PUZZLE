@@ -39,7 +39,7 @@ public class ButtonManager : MonoBehaviour
 
     }
 
-    public void OnClickSelectMode()            //다른 목록보기
+    public void OnClickSelectMenu()            //다른 목록보기
     {
         
         SceneManager.LoadScene(1);
@@ -52,8 +52,6 @@ public class ButtonManager : MonoBehaviour
         Application.Quit();
 
     }
-
-
     public void OnClickStart()      //클릭시 스타트
     {
 

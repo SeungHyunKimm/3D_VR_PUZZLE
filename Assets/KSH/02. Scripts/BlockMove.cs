@@ -22,12 +22,8 @@ public class BlockMove : MonoBehaviour
     GameObject click1;
     GameObject click2;
 
-
-
     Ray ray;
     RaycastHit hit;
-
-
 
 
     void Start()
@@ -36,15 +32,14 @@ public class BlockMove : MonoBehaviour
 
         SetGrid();
 
-
     }
 
     void Update()
     {
 
         OnClickRTouch();
-
- 
+        
+        
 
     }
 
@@ -84,14 +79,12 @@ public class BlockMove : MonoBehaviour
         }
     }
 
-
     void OnClickRTouch()
     {
         //VR용
         ray = new Ray(transform.position, transform.forward);
         //마우스클릭용
         //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
         if (Physics.Raycast(ray, out hit))
         {
             if (Input.GetMouseButtonDown(0) || OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
@@ -99,17 +92,16 @@ public class BlockMove : MonoBehaviour
                 if (cnt == 0)
                 {
                     Position1 = hit.transform.gameObject;
+                    Position1.transform.position = new Vector3(Position1.transform.position.x, Position1.transform.position.y, -1);
                     cnt++;
                 }
-
                 else if (cnt == 1)
                 {
                     //클릭한 블록 변수 1,2로 나누어 담고 Shuffle
                     Position2 = hit.transform.gameObject;
-                    Vector3 temp = Position1.transform.position;
+                    Vector3 temp = Position1.transform.position + new Vector3(0,0,1);
                     Position1.transform.position = Position2.transform.position;
                     Position2.transform.position = temp;
-
                     Position1 = null;
                     Position2 = null;
                     cnt = 0;
@@ -117,5 +109,4 @@ public class BlockMove : MonoBehaviour
             }
         }
     }
-
 }

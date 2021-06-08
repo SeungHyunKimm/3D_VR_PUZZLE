@@ -1,21 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CheckAnswer_Piller : MonoBehaviour
 {
     //충돌 체크 카운트
-    int collision_cnt = 1;
+    
+    public int collision_cnt = 1;
     BlockManager ga;
 
     public string BlockName;
-
+    public Slider sliderName;
 
     void Start()
     {
 
         GameObject bk = GameObject.Find("BlockManager");
         ga = bk.GetComponent<BlockManager>();
+        //GetComponent<BlockState_Manager>();
+        
 
     }
 
@@ -27,19 +31,20 @@ public class CheckAnswer_Piller : MonoBehaviour
             collision_cnt++;
             //print(collision_cnt);
             ga.totalBlockNumber++;
+            sliderName.value = collision_cnt * 0.1f;
+
             //사용자가 블록을 옮길때 맞는 색상의 블록이면 collision_cnt에 더한다
 
             if (collision_cnt == 10)
             {
                 //한줄 완료에 대한 카운트
                 print("한줄 완료되었습니다.");
-                //각 색상별 블록 정답처리(10개)가 되면 UI를 SetActive하는 함수를 실행시킨다.
-                
+                //각 색상별 블록 정답처리(10개)가 되면 슬라이더를 실행시킬 함수를 만든다.
             }
             if (ga.totalBlockNumber == 100)
             {
                 print("모두 정답입니다.");
-                //100개의 블록이 모두 위치하게 되면 UI를 SetActive하는 함수를 실행시킨다.
+                //100개의 블록이 모두 위치하게 되면 완성되었다는 UI를 만든다.
             }
         }
     }
@@ -54,6 +59,7 @@ public class CheckAnswer_Piller : MonoBehaviour
             collision_cnt--;
             //print(collision_cnt);
             ga.totalBlockNumber--;
+            sliderName.value = collision_cnt * 0.1f;
         }
     }
 }

@@ -87,9 +87,13 @@ public class Right_Controller : MonoBehaviour
             {
                 ButtonManager.instance.OnClickRetry();
             }
-            if (hit.transform.gameObject.name.Contains("SelectMode"))
+            if (hit.transform.gameObject.name.Contains("SelectMenu"))
             {
-                ButtonManager.instance.OnClickSelectMode();
+                ButtonManager.instance.OnClickSelectMenu();
+            }
+            if (hit.transform.gameObject.name.Contains("ExitGame"))
+            {
+                ButtonManager.instance.OnClickExitGame();
             }
             return;
         } // 만약 메뉴창이 활성화되고 Trigger버튼을 누르고 있지 않으면
@@ -171,6 +175,7 @@ public class Right_Controller : MonoBehaviour
         pos.transform.position = transform.position;
         es.Target = hit.transform.gameObject;
     }
+
     public void PuzzleChoiceChange(GameObject go)                   //Shot 발사 후 Catch 상태로 전환
     {
         for (int i = 0; i < preView.Length; i++)
@@ -198,14 +203,13 @@ public class Right_Controller : MonoBehaviour
             lr.SetPosition(0, transform.position);
             lr.SetPosition(1, hit.point);
             RotateButton(hit.transform.gameObject);
-            
         }
         else
         {
             lr.SetPosition(0, transform.position);
             lr.SetPosition(1, transform.position + transform.forward * 1);
             RotateButton(null);
-            
+
         }
     }
 
@@ -240,21 +244,24 @@ public class Right_Controller : MonoBehaviour
 
         if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
         {
+
             //print(hit.transform.gameObject.name);
             //Saturn 행성을 클릭해서 StartScene을 활성화 하고 싶다.
-            if (hit.transform.gameObject.name.Contains("Saturn"))
+            if (Physics.Raycast(ray, out hit))
             {
-                //행성들 다 사라지게 한다.
-                Star.SetActive(false);
-                StartCanvas.SetActive(true);
-                StartCanvas.transform.position = Scene_Start.transform.position;
+                if (hit.transform.gameObject.name.Contains("Saturn"))
+                {
+                    //행성들 다 사라지게 한다.
+                    Star.SetActive(false);
+                    StartCanvas.SetActive(true);
+                    StartCanvas.transform.position = Scene_Start.transform.position;
+                }
             }
         }
-
-
-
     }
-    GameObject focusBtn;
+
+
+    public GameObject focusBtn;
     void RotateButton(GameObject btn)
     {
         if (btn == null || btn.name.Contains("Mode") == false)
@@ -272,14 +279,14 @@ public class Right_Controller : MonoBehaviour
                 StopRotateButton();
             }
             focusBtn = btn;
-            iTween.RotateBy(focusBtn.transform.GetChild(0).gameObject, iTween.Hash("x", .25, iTween.EaseType.easeInElastic, iTween.LoopType.pingPong, "name", btn.name));
+            iTween.RotateBy(focusBtn.transform.GetChild(0).gameObject, iTween.Hash("x", .25, iTween.EaseType.easeInBounce, iTween.LoopType.pingPong, "name", btn.name));
         }
     }
     void StopRotateButton()
     {
         iTween.StopByName(focusBtn.name);
         focusBtn.transform.GetChild(0).transform.localEulerAngles = Vector3.zero;
-        //focusBtn = null;
+        focusBtn = null;
     }
 
 
@@ -292,23 +299,30 @@ public class Right_Controller : MonoBehaviour
 
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
         //오른쪽 B버튼을 누르고 있으면
-
-        if (ButtonManager.instance.settingUI.activeSelf && v > 0)
+        if(Physics.Raycast(ray, out hit))
         {
-            if (hit.transform.gameObject.name.Contains("Resume"))
+            if (ButtonManager.instance.settingUI.activeSelf && v > 0)
             {
-                ButtonManager.instance.OnClickResume();
+                if (hit.transform.gameObject.name.Contains("Resume"))
+                {
+                    ButtonManager.instance.OnClickResume();
+                }
+                if (hit.transform.gameObject.name.Contains("Retry"))
+                {
+                    ButtonManager.instance.OnClickRetry();
+                }
+                if (hit.transform.gameObject.name.Contains("SelectMenu"))
+                {
+                    ButtonManager.instance.OnClickSelectMenu();
+                }
+                if (hit.transform.gameObject.name.Contains("ExitGame"))
+                {
+                    ButtonManager.instance.OnClickExitGame();
+                }
+                return;
             }
-            if (hit.transform.gameObject.name.Contains("Retry"))
-            {
-                ButtonManager.instance.OnClickRetry();
-            }
-            if (hit.transform.gameObject.name.Contains("SelectMode"))
-            {
-                ButtonManager.instance.OnClickSelectMode();
-            }
-            return;
         }
+        
 
         if (v > 0)
         {
@@ -363,9 +377,13 @@ public class Right_Controller : MonoBehaviour
             {
                 ButtonManager.instance.OnClickRetry();
             }
-            if (hit.transform.gameObject.name.Contains("SelectMode"))
+            if (hit.transform.gameObject.name.Contains("SelectMenu"))
             {
-                ButtonManager.instance.OnClickSelectMode();
+                ButtonManager.instance.OnClickSelectMenu();
+            }
+            if (hit.transform.gameObject.name.Contains("ExitGame"))
+            {
+                ButtonManager.instance.OnClickExitGame();
             }
             return;
         }
