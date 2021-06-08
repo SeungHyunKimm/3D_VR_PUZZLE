@@ -126,6 +126,7 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
 
         if (Physics.Raycast(ray, out hit))
         {
+            print(hit.transform.name);
             if (Input.GetMouseButtonDown(0))                    //오른손으로 클릭 시 멈추게 
             {
                 //if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Puzzle"))
@@ -141,7 +142,7 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
                 //{
                 //    photonView.RPC("Catch", RpcTarget.All, hit.point, pv.ViewID);
                 //}
-
+                print(hit.transform.name);
                 photonView.RPC("Catch", RpcTarget.All/*, hit.point, pv.ViewID*/,hit.transform.name);
                 //Shot();
                 //PuzzleChoiceChange(hit.transform.gameObject);
@@ -265,6 +266,7 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
         //{
         //    if (viewId == puzzles[i].ViewID)
         //    {
+        print(name);
         for (int i = 0; i < preView.Length; i++)
         {
             if (preView[i].name == name)     //프리뷰 인덱스 저장 및 Catch상태로 변환 
