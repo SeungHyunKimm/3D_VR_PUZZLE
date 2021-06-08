@@ -266,28 +266,35 @@ public class Right_Controller : MonoBehaviour
     {
         if (btn == null || btn.name.Contains("Mode") == false)
         {
-            if (focusBtn)
-            {
-                StopRotateButton();
-            }
+            StopRotateButton();
         }
 
         else if (btn.name.Contains("Mode"))
         {
-            if (focusBtn && focusBtn != btn)
+            if(focusBtn != btn)
             {
                 StopRotateButton();
+                iTween.RotateBy(btn.transform.GetChild(0).gameObject, iTween.Hash(
+                    "x", .25, 
+                    "easytype", iTween.EaseType.easeInBounce,  
+                    "looptype", iTween.LoopType.pingPong, 
+                    "name", btn.name));
             }
             focusBtn = btn;
-            iTween.RotateBy(focusBtn.transform.GetChild(0).gameObject, iTween.Hash("x", .25, iTween.EaseType.easeInBounce, iTween.LoopType.pingPong, "name", btn.name));
         }
     }
+
+    
     void StopRotateButton()
     {
+        if (focusBtn == null) return;
+
         iTween.StopByName(focusBtn.name);
         focusBtn.transform.GetChild(0).transform.localEulerAngles = Vector3.zero;
         focusBtn = null;
     }
+
+
 
 
     void CatchObj()

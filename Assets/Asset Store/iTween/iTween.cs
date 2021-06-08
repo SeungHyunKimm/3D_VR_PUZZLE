@@ -6092,7 +6092,10 @@ public class iTween : MonoBehaviour
 		for (int i = 0; i < tweens.Count; i++) {
 			Hashtable currentTween = tweens[i];
 			GameObject target = (GameObject)currentTween["target"];
-			stopArray.Insert(stopArray.Count,target);
+			if(target != null)
+            {
+				stopArray.Insert(stopArray.Count,target);
+            }
 		}
 		
 		for (int i = 0; i < stopArray.Count; i++) {
