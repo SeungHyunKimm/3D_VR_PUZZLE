@@ -18,7 +18,7 @@ public class NetManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         base.OnConnectedToMaster();
-        PhotonNetwork.NickName = "Player" + Random.Range(0, 3);
+        PhotonNetwork.NickName = "Player" + Random.Range(0, 4);
         PhotonNetwork.JoinLobby();                   //¹æ Á¢¼Ó
     }
 
@@ -38,7 +38,7 @@ public class NetManager : MonoBehaviourPunCallbacks
     {
         base.OnJoinedRoom();
         print("OnJoinedRoom");
-        PhotonNetwork.Instantiate("Player", new Vector3(5,5,-5) , Quaternion.identity);
+        PhotonNetwork.Instantiate("VRPlayer", new Vector3(5, 5, 5) , new Quaternion(0,180,0,1));
     }
 
 }
