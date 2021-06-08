@@ -24,19 +24,19 @@ public class TouchRotate : MonoBehaviour
         //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
     }
 
-    void LeftButtonOn()
-    {
-        //if (Physics.Raycast(ray, out hit))
-        //{
-        //    //print("hit");
-        //    if (Input.GetMouseButtonDown(0) || OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
-        //    {
-        //        //VR로 클릭시
-        //        //hit.transform.Rotate(0, 0, 90);
+    //void LeftButtonOn()
+    //{
+    //    //if (Physics.Raycast(ray, out hit))
+    //    //{
+    //    //    //print("hit");
+    //    //    if (Input.GetMouseButtonDown(0) || OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+    //    //    {
+    //    //        //VR로 클릭시
+    //    //        //hit.transform.Rotate(0, 0, 90);
 
-        //        //마우스 클릭시
-        //        //transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
-        //    }
-        //}
-    }
+    //    //        //마우스 클릭시
+    //    //        //transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
+    //    //    }
+    //    //}
+    //}
 }

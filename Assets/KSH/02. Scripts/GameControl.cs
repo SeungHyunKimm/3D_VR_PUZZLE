@@ -9,11 +9,13 @@ public class GameControl : MonoBehaviour
     [SerializeField]
     public GameObject winText;
     public static bool youWin;
+    public Right_Controller rc;
     void Start()
     {
         //winText.SetActive(false)
         youWin = false;
         MovePic();
+
     }
     void MovePic()
     {
@@ -39,6 +41,7 @@ public class GameControl : MonoBehaviour
             print("모든 사진 완료");
             youWin = true;
             winText.SetActive(true);
+            rc.isClear = true;
         }
     }
 }

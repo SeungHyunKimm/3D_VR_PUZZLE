@@ -9,10 +9,13 @@ public class DragDrop : MonoBehaviour
     Ray ray;
     RaycastHit hit;
     LineRenderer lr;
+    JigsawPuzzle jp;
 
     void Start()
     {
+
         lr = GetComponent<LineRenderer>();
+        jp = GameObject.Find("JigsawPuzzle").GetComponent<JigsawPuzzle>();
 
     }
 
@@ -38,6 +41,7 @@ public class DragDrop : MonoBehaviour
         }
     }
 
+    bool isTrigger = false;
     void ObjectRay()
     {
         ray = new Ray(transform.position, transform.forward);
@@ -56,12 +60,21 @@ public class DragDrop : MonoBehaviour
                     if (Physics.Raycast(ray, out hit, 100, layer))
                     {
                         //print(selectedPiece);
-                        selectedPiece.transform.position = new Vector3(hit.point.x, hit.point.y, -0.1f);                    //트리거 당긴 넘의 z축을 이동하지 않게 하고 싶다.
+                        //마우스 우클릭을 했을때 
+                        //클릭한 놈의 GameObject를 움직일 수 있게 하자
+                        selectedPiece.transform.position = new Vector3(hit.point.x, hit.point.y, -0.1f); //<=트리거 당긴 넘의 z축을 이동하지 않게 하고 싶다.
+                        isTrigger = true;
                     }
                 }
-                //마우스 우클릭을 했을때 
-                //클릭한 놈의 GameObject를 움직일 수 있게 하자
             }
+        }
+        else if (isTrigger == true && v <= 0)
+        {
+            isClick = false;
+            jp.DragSign();
+            isTrigger = false;
+            print("dㄴㄴ");
+
         }
 
 
@@ -86,14 +99,7 @@ public class DragDrop : MonoBehaviour
                     ButtonManager.instance.OnClickExitGame();
                 }
                 return;
-
             }
-        }
-
-
-        else if (v < 0)
-        {
-            isClick = false;
         }
     }
 }

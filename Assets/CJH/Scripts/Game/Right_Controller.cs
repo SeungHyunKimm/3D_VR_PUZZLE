@@ -356,13 +356,13 @@ public class Right_Controller : MonoBehaviour
             }
         }
     }
-
+    public bool isClear;
     void CatchObj_B()
     {
         ray = new Ray(transform.position, transform.forward);
         int layer1 = 1 << LayerMask.NameToLayer("Puzzle");
 
-        if (Physics.Raycast(ray, out hit, 100, layer1))
+        if (Physics.Raycast(ray, out hit, 100, layer1) && isClear == false)
         {
             if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
             {
