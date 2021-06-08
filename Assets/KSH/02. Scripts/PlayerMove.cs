@@ -7,6 +7,8 @@ public class PlayerMove : MonoBehaviour
     //플레이어 속도
     public float speed = 3;
     public float rotateSpeed = 3;
+    Ray ray;
+    RaycastHit hit;
     void Start()
     {
 

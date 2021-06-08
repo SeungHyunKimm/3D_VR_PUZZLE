@@ -19,6 +19,12 @@ public class BlockMove : MonoBehaviour
     //그리드 값 받을 변수
     Transform blockPos1;
 
+    GameObject click1;
+    GameObject click2;
+
+    Ray ray;
+    RaycastHit hit;
+
 
     void Start()
     {
@@ -26,15 +32,19 @@ public class BlockMove : MonoBehaviour
 
         SetGrid();
 
-
     }
 
     void Update()
     {
 
-        OnClickLeftMouse();
+        OnClickRTouch();
+        
+        
 
     }
+
+
+
 
     void SetGrid()
     {
@@ -43,11 +53,10 @@ public class BlockMove : MonoBehaviour
         //반복문 100개를 돌린다
         for (int i = 0; i < 10; i++) // 0 -> 9
         {
-            for (int j = 0; j < 10; j++)
+            for (int j = 0; j < 10; j++) // 0 -> 9
             {
                 //x,y 좌표값을 담을 변수 index
                 int index = ((i + j) + 9 * i);
-
                 //index를 Grid에 담자
                 grid[i, j] = Blocks[index].transform;
 
@@ -62,7 +71,7 @@ public class BlockMove : MonoBehaviour
                 //temp변수 만들어서 위치를 Swap한다.
                 grid[i, j].transform.position = grid[x, y].transform.position;
                 grid[x, y].transform.position = TempGrid;
-                
+
                 //정답 처리도 만들어보자(퍼즐을 원위치 시켰을 때)
                 //각 색깔 10개마다 줄이 완성되면 정답 완성을 프린트 해보자.
                 //각 색깔줄마다 수시로 검사를 하여 만약 한줄의 컬러가 같으면 정답 처리.
@@ -70,28 +79,29 @@ public class BlockMove : MonoBehaviour
         }
     }
 
-
-    void OnClickLeftMouse()
+    void OnClickRTouch()
     {
-        Ray ray = new Ray(transform.position, transform.forward);
-        RaycastHit hit;
+        //VR용
+        ray = new Ray(transform.position, transform.forward);
+        //마우스클릭용
+        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit))
         {
-            if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+            if (Input.GetMouseButtonDown(0) || OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
             {
                 if (cnt == 0)
                 {
                     Position1 = hit.transform.gameObject;
+                    Position1.transform.position = new Vector3(Position1.transform.position.x, Position1.transform.position.y, -1);
                     cnt++;
                 }
-
                 else if (cnt == 1)
                 {
+                    //클릭한 블록 변수 1,2로 나누어 담고 Shuffle
                     Position2 = hit.transform.gameObject;
-                    Vector3 temp = Position1.transform.position;
+                    Vector3 temp = Position1.transform.position + new Vector3(0,0,1);
                     Position1.transform.position = Position2.transform.position;
                     Position2.transform.position = temp;
-
                     Position1 = null;
                     Position2 = null;
                     cnt = 0;

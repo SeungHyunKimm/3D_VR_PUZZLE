@@ -1,128 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 
-public class Right_Controller : MonoBehaviourPun, IPunObservable
+public class Right_Controller : MonoBehaviour
 {
-    public int preViewIndex;                   //선택한 퍼즐의 인덱스
-    public PuzzleManager pr;
-    public CanvasManager[] cv;
-    public GameObject[] preView;       //퍼즐 프리뷰 배열
-
+    public static Rigidbody rigid;             //선택한 퍼즐의 RigidBody
+    public static int preViewIndex;            //선택한 퍼즐의 프리 뷰
+    public static PuzzleManager pr;            //선택한 퍼즐의 PuzzleManager
     public float throwPower = 3;
     Ray ray;
     RaycastHit hit;
     Transform catchObj;
     LineRenderer lr;
+    public GameObject[] preView; //프리 뷰 담는 배열
     public float Speed;          //캔퍼스로 이동하는 속도
 
     public GameObject shot;
     public GameObject pos;
     EffectSettings es;
 
-    public float fusionSpeed;                //결합 속도
-    //public GameObject setting;
-    GameObject control;
-    //Photon
-    public GameObject my , other;
-    public Transform [] myPosition;    //나
-    public Transform [] otherPosition; //상대
-    //public Transform camera;
-    float rotX, rotY;
-    int z = 0;
-    int playerPreViewIndex = 1;
-    GameObject[] puzzles;
-
-    public GameObject right;
-
 
     GameObject SelectObj; // 선택한 놈 (승현)
     //클릭한 상태
     bool isClick;
-    Vector3 controlpos, controldir;
-    Vector3 otherpos;
+    //스타트캔버스
+    public GameObject StartCanvas;
+    //행성들
+    public GameObject Star;
+    //스타트 화면을 놓을 변수
+    public GameObject Scene_Start;
 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting)
-        {
-            stream.SendNext(transform.position);
-            for (int i = 0; i < myPosition.Length; i++)
-            {
-                stream.SendNext(myPosition[i].transform.position);
-                stream.SendNext(myPosition[i].transform.rotation);
-            }
-        }
-        if (stream.IsReading)
-        {
-            otherpos = (Vector3)stream.ReceiveNext();
-            for (int i = 0; i < otherPosition.Length; i++)
-            {
-                otherPosition[i].position = (Vector3)stream.ReceiveNext();
-                otherPosition[i].rotation = (Quaternion)stream.ReceiveNext();
-            }
-        }
-    }
-
-    private void Awake()
-    {
-        GameObject puz = GameObject.Find("Puzzle");
-        //puzzles = new PhotonView[puz.transform.childCount];
-        puzzles = new GameObject[puz.transform.childCount];
-
-        for (int i = 0; i < puz.transform.childCount; i++)
-            //puzzles[i] = puz.transform.GetChild(i).gameObject.GetComponent<PhotonView>();         //각 퍼즐들의 포톤 뷰 정보
-            puzzles[i] = puz.transform.GetChild(i).gameObject;
-    }
 
     void Start()
     {
-        cv = new CanvasManager[2];
-        //포톤 생성 및 셋팅
-        my.SetActive(photonView.IsMine);
-        other.SetActive(!photonView.IsMine);
-
-        GameObject canvas = GameObject.Find("Canvas");
-        for (int i = 0; i < cv.Length; i++)
-            cv[i] = canvas.transform.GetChild(i).GetComponent<CanvasManager>();
-
-        if (PhotonNetwork.IsMasterClient)
-        {
-            transform.position = new Vector3(5, 5, -5);
-            SetCanvas();
-            z = 0;
-            playerPreViewIndex = 0;
-        }
-
-        GameObject pre = GameObject.Find("PreView");         //프리뷰 담기
-        for (int i = 0; i < pre.transform.childCount; i++)
-            preView[i] = pre.transform.GetChild(i).gameObject;
-
-        fusionSpeed = 10;
-
-        control = GameObject.Find("ControlPos");
-
-        lr = right.GetComponent<LineRenderer>();
+        lr = GetComponent<LineRenderer>();
         es = shot.GetComponent<EffectSettings>();
-    }
 
-    void SetCanvas()
-    {
-        if (photonView.IsMine)
-        {
-            for (int i = 0; i < cv.Length; i++)
-                cv[i].SetPuzzlePosition();
-        }
+
     }
 
     void Update()
     {
-        if (!photonView.IsMine)       //상대방 위치 셋팅 
-        {
-            transform.position = Vector3.Lerp(transform.position, otherpos, 0.05f);
-            return;
-        }
         switch (ButtonManager.instance.state)
         {
             case ButtonManager.ButtonState.Start:
@@ -149,177 +67,88 @@ public class Right_Controller : MonoBehaviourPun, IPunObservable
     void ModeA_RightController()                             //A 모드 오른손 컨트롤러
     {
 
-        ray = new Ray(right.transform.position, right.transform.forward);
+        ray = new Ray(transform.position, transform.forward);
 
         if (Physics.Raycast(ray, out hit, 100))
         {
             PuzzleControl();
         }
-
-        if (pr == null) return;
-        if (pr.state == PuzzleManager.PuzzleState.Revolution) return;
-        if (OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch))
-        {
-            photonView.RPC("ControlDown", RpcTarget.All);
-        }
-        if (OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch))  //A 버튼 클릭 중
-        {
-            controldir = transform.position - controlpos;
-            photonView.RPC("Control", RpcTarget.All, controldir);
-        }
-        else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch)) //A 버튼 Up
-        {
-            photonView.RPC("ControlUp", RpcTarget.All);                                                     //프리 뷰 생성 금지
-        }
     }
-
     void PuzzleControl()
     {
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B 버튼
-        //Button(v);
+        if (ButtonManager.instance.settingUI.activeSelf && v > 0)
+        {
+            if (hit.transform.gameObject.name.Contains("Resume"))
+            {
+                ButtonManager.instance.OnClickResume();
+            }
+            if (hit.transform.gameObject.name.Contains("Retry"))
+            {
+                ButtonManager.instance.OnClickRetry();
+            }
+            if (hit.transform.gameObject.name.Contains("SelectMenu"))
+            {
+                ButtonManager.instance.OnClickSelectMenu();
+            }
+            if (hit.transform.gameObject.name.Contains("ExitGame"))
+            {
+                ButtonManager.instance.OnClickExitGame();
+            }
+            return;
+        } // 만약 메뉴창이 활성화되고 Trigger버튼을 누르고 있지 않으면
         if (v > 0)                        //클릭 또는 클릭 중
-            photonView.RPC("Catch", RpcTarget.All/*, hit.point, pv.ViewID*/, hit.transform.name);
+            Shot();
 
-        if (pr == null) return;
-        if (pr.state != PuzzleManager.PuzzleState.Catch)
-            preView[preViewIndex].SetActive(false);
-        if (OVRInput.Get(OVRInput.Button.Two, OVRInput.Controller.RTouch))
-            photonView.RPC("FusionDown", RpcTarget.All);
-        else if (OVRInput.Get(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+        if (pr != null)                       //선택된 블록이 없을 시 값 참조에 오류 방지
         {
-            if (hit.transform.name == "Canvas")                  //캔퍼스일 때 프리 뷰 생성
+            if (OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch))  //A 버튼 클릭 중
             {
-                int x = (int)hit.point.x;
-                int y = (int)hit.point.y;
-                photonView.RPC("Fusion", RpcTarget.All, x, y);
+                Vector3 dir = transform.position - hit.transform.position;
+                pr.Move(dir, 0.025f);
             }
-        }
-        else if (OVRInput.GetUp(OVRInput.Button.Two, OVRInput.Controller.RTouch))
-            photonView.RPC("FusionUp", RpcTarget.All);
-        float rot = OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch);
-        if (rot > 0)
-        {
-            photonView.RPC("Rotate", RpcTarget.All);
-        }
-    }
-    void Shot()
-    {
-        shot.SetActive(true);
-        shot.transform.position = transform.position;
-        pos.transform.position = transform.position;
-        es.Target = hit.transform.gameObject;
-    }
-    [PunRPC]
-    void Rotate()
-    {
-        preView[preViewIndex].transform.Rotate(0, 0, 90);
-    }
-    [PunRPC]
-    void FusionDown()
-    {
-        //왼손
-        preView[preViewIndex].SetActive(true);
-    }
-    [PunRPC]
-    void Fusion(int x, int y)
-    {
-        preView[preViewIndex].transform.position = new Vector3(x, y, z);
-    }
-    [PunRPC]
-    void BlockMove(Vector3 dir)
-    {
-        pr.Move(dir, fusionSpeed);
-        pr.SetPreViewXYZ(preView[preViewIndex]);
-        pr = null;
-    }
-    [PunRPC]
-    void FusionUp()
-    {
-        if (pr.state == PuzzleManager.PuzzleState.Catch || pr.state == PuzzleManager.PuzzleState.Control)
-        {
-            pr.state = PuzzleManager.PuzzleState.Fusion;
-            if (photonView.IsMine)
+            else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch)) //A 버튼 Up
             {
-                Vector3 dir = preView[preViewIndex].transform.position - pr.transform.position;
-                photonView.RPC("BlockMove", RpcTarget.All, dir);
+                pr.state = PuzzleManager.PuzzleState.Revolution;                      //공전 상태로 전환
+                pr = null;                                                            //프리 뷰 생성 금지
             }
-        }
-        PreViewClose();
-    }
 
-    [PunRPC]
-    void ControlDown()
-    {
-        pr.state = PuzzleManager.PuzzleState.Control;
-        controlpos = right.transform.position;
-        control.transform.position = controlpos;
-    }
-    [PunRPC]
-    void Control(Vector3 controldir)
-    {
-        pr.controlpos = controldir;
-    }
-
-    [PunRPC]
-    void ControlUp()
-    {
-        pr.GetComponent<Rigidbody>().isKinematic = true;
-        pr.state = PuzzleManager.PuzzleState.Catch;
-    }
-    [PunRPC]
-    void PreViewClose()
-    {
-        preView[preViewIndex].SetActive(false);
-    }
-
-    [PunRPC]
-    void Catch(/*Vector3 hitPoint, int viewId*/string name)
-    {
-        //for (int i = 0; i < puzzles.Length; i++)
-        //{
-        //    if (viewId == puzzles[i].ViewID)
-        //    {
-        for (int i = 0; i < preView.Length; i++)
-        {
-            if (preView[i].name == name)     //프리뷰 인덱스 저장 및 Catch상태로 변환 
+            if (OVRInput.Get(OVRInput.Button.Two, OVRInput.Controller.RTouch))
             {
-                if (preView[preViewIndex].name != puzzles[i].name && pr != null)
+                if (hit.transform.name == "Canvas")                  //캔퍼스일 때 프리 뷰 생성
                 {
-                    if (pr.state == PuzzleManager.PuzzleState.Catch || pr.state == PuzzleManager.PuzzleState.Control)
-                    {
-                        photonView.RPC("PreViewClose", RpcTarget.All);                //모든 PC에 프리 뷰 비활성화
-                        pr.state = PuzzleManager.PuzzleState.Revolution;
-                    }
+                    preView[preViewIndex].SetActive(true);
+
+                    int x = (int)hit.point.x;
+                    int y = (int)hit.point.y;
+
+                    preView[preViewIndex].transform.position = new Vector2(x, y);
                 }
-                preViewIndex = i;
-                pr = puzzles[i].GetComponent<PuzzleManager>();
-                pr.state = PuzzleManager.PuzzleState.Catch;
-                cv[playerPreViewIndex].CatchToCheckBox(preViewIndex);
-                puzzles[i].GetComponent<Rigidbody>().isKinematic = true; //멈추게 만들기
-                puzzles[i].GetComponent<Rigidbody>().isKinematic = false;
-                break;
+                else
+                    preView[preViewIndex].SetActive(false);
+            }
+            else if (OVRInput.GetUp(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+            {
+                if (pr.state == PuzzleManager.PuzzleState.Catch)
+                {
+                    pr.state = PuzzleManager.PuzzleState.Fusion;
+                    Vector3 dir = preView[preViewIndex].transform.position - rigid.transform.position;
+                    pr.Move(dir, Speed);
+                }
+                preView[preViewIndex].SetActive(false);
+                pr = null;
             }
         }
-        //break;
-        //    }
-        //}
-        //shot.SetActive(true);
-        //shot.transform.position = Camera.main.transform.position;
-        //pos.transform.position = Camera.main.transform.position;
-        //es.Target = hit.transform.gameObject;
     }
-
 
     void ModeB_RightController()            //B 모드 오른손 컨트롤러
     {
 
-
-        CatchObj();
+        CatchObj_B();
 
     }
     void ModeC_RightController()            //C 모드 오른손 컨트롤러
     {
-
 
         CatchObj();
 
@@ -327,41 +156,70 @@ public class Right_Controller : MonoBehaviourPun, IPunObservable
     void ModeD_RightController()            //D 모드 오른손 컨트롤러
     {
 
-
         CatchObj();
 
     }
+
     void Start_Select_RightController()         // Start & Select Mode 오른손 컨트롤러
     {
+
+
         OnClickButtonUI();
+
+    }
+
+    void Shot()
+    {
+        shot.SetActive(true);
+        shot.transform.position = transform.position;
+        pos.transform.position = transform.position;
+        es.Target = hit.transform.gameObject;
+    }
+
+    public void PuzzleChoiceChange(GameObject go)                   //Shot 발사 후 Catch 상태로 전환
+    {
+        for (int i = 0; i < preView.Length; i++)
+        {
+            if (preView[i].name == go.name)     //프리뷰 인덱스 저장 및 Catch상태로 변환 
+            {
+                if (preView[preViewIndex].name != go.transform.gameObject.name && pr != null && pr.state == PuzzleManager.PuzzleState.Catch)
+                    pr.state = PuzzleManager.PuzzleState.Revolution;
+                rigid = go.transform.GetComponent<Rigidbody>();
+                pr = go.transform.GetComponent<PuzzleManager>();
+                pr.state = PuzzleManager.PuzzleState.Catch;
+                rigid.isKinematic = true;
+                preViewIndex = i;
+                break;
+            }
+        }
     }
     void DrawGuideLine()
     {
+        //ray = new Ray(transform.position, transform.forward);
         //레이와 부딪힌 놈까지
         if (Physics.Raycast(ray, out hit))
         {
             //거리를 구해서 라인을 그린다.
-            lr.SetPosition(0, right.transform.position);
+            lr.SetPosition(0, transform.position);
             lr.SetPosition(1, hit.point);
+            RotateButton(hit.transform.gameObject);
         }
         else
         {
-            lr.SetPosition(0, right.transform.position);
+            lr.SetPosition(0, transform.position);
             lr.SetPosition(1, transform.position + transform.forward * 1);
-            preView[preViewIndex].SetActive(false);
+            RotateButton(null);
+
         }
     }
+
     void OnClickButtonUI() //승현 StartScene에서 사용할 함수 - 버튼 누를 시 다음 씬 전환
     {
         ray = new Ray(transform.position, transform.forward);
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B 버튼
 
-
-
-        if (v > 0)
+        if (v > 0 && Physics.Raycast(ray, out hit))
         {
-            //int layer = 1 << LayerMask.NameToLayer("UI");
-            //if (Physics.Raycast(ray, out hit, 1000, layer))
             if (hit.transform.gameObject.name.Contains("StartButton"))
             {
                 ButtonManager.instance.OnClickStart();
@@ -383,7 +241,62 @@ public class Right_Controller : MonoBehaviourPun, IPunObservable
                 ButtonManager.instance.OnClickMode_D();
             }
         }
+
+        if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+        {
+
+            //print(hit.transform.gameObject.name);
+            //Saturn 행성을 클릭해서 StartScene을 활성화 하고 싶다.
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.transform.gameObject.name.Contains("Saturn"))
+                {
+                    //행성들 다 사라지게 한다.
+                    Star.SetActive(false);
+                    StartCanvas.SetActive(true);
+                    StartCanvas.transform.position = Scene_Start.transform.position;
+                }
+            }
+        }
     }
+
+
+    public GameObject focusBtn;
+    void RotateButton(GameObject btn)
+    {
+        if (btn == null || btn.name.Contains("Mode") == false)
+        {
+            StopRotateButton();
+        }
+
+        else if (btn.name.Contains("Mode"))
+        {
+            if(focusBtn != btn)
+            {
+                StopRotateButton();
+                iTween.RotateBy(btn.transform.GetChild(0).gameObject, iTween.Hash(
+                    "x", .25, 
+                    "easytype", iTween.EaseType.easeInBounce,  
+                    "looptype", iTween.LoopType.pingPong, 
+                    "name", btn.name));
+            }
+            focusBtn = btn;
+        }
+    }
+
+    
+    void StopRotateButton()
+    {
+        if (focusBtn == null) return;
+
+        iTween.StopByName(focusBtn.name);
+        focusBtn.transform.GetChild(0).transform.localEulerAngles = Vector3.zero;
+        focusBtn = null;
+    }
+
+
+
+
     void CatchObj()
     {
         isClick = true;
@@ -393,24 +306,30 @@ public class Right_Controller : MonoBehaviourPun, IPunObservable
 
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
         //오른쪽 B버튼을 누르고 있으면
-
-        if (ButtonManager.instance.settingUI.activeSelf && v > 0)
+        if(Physics.Raycast(ray, out hit))
         {
-            if (hit.transform.gameObject.name.Contains("Cancle"))
+            if (ButtonManager.instance.settingUI.activeSelf && v > 0)
             {
-                ButtonManager.instance.OnClickCancle();
+                if (hit.transform.gameObject.name.Contains("Resume"))
+                {
+                    ButtonManager.instance.OnClickResume();
+                }
+                if (hit.transform.gameObject.name.Contains("Retry"))
+                {
+                    ButtonManager.instance.OnClickRetry();
+                }
+                if (hit.transform.gameObject.name.Contains("SelectMenu"))
+                {
+                    ButtonManager.instance.OnClickSelectMenu();
+                }
+                if (hit.transform.gameObject.name.Contains("ExitGame"))
+                {
+                    ButtonManager.instance.OnClickExitGame();
+                }
+                return;
             }
-            if (hit.transform.gameObject.name.Contains("Retry"))
-            {
-                ButtonManager.instance.OnClickRetry();
-            }
-            if (hit.transform.gameObject.name.Contains("Other"))
-            {
-                ButtonManager.instance.OnClickOther();
-            }
-            return;
         }
-
+        
 
         if (v > 0)
         {
@@ -420,38 +339,65 @@ public class Right_Controller : MonoBehaviourPun, IPunObservable
             {
                 print("isClick");
                 SelectObj = hit.transform.gameObject;
-
-
             }
         }
+
         else if (v < 0)
         {
             isClick = false;
         }
+
         if (isClick == true && SelectObj != null)
         {
-            ray = new Ray(transform.position, transform.forward);
             int layer = 1 << LayerMask.NameToLayer("Puzzle");
             if (Physics.Raycast(ray, out hit, 100, layer))
             {
                 SelectObj.transform.position = hit.point;
-                //hit.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-
             }
         }
-        //문제는 오래 쥐고 있을 수록 퍼즐조각이 앞으로 다가와진다.
+    }
 
-        if (OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch))
+    void CatchObj_B()
+    {
+        ray = new Ray(transform.position, transform.forward);
+        int layer1 = 1 << LayerMask.NameToLayer("Puzzle");
+
+        if (Physics.Raycast(ray, out hit, 100, layer1))
         {
-
+            if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+            {
+                //B번 물체
+                print("rotate complete");
+                hit.transform.Rotate(0, 0, 90);
+            }
         }
-        if (OVRInput.Get(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+
+        float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
+
+        if (ButtonManager.instance.settingUI.activeSelf && v > 0 && Physics.Raycast(ray, out hit))
         {
-
-
+            if (hit.transform.gameObject.name.Contains("Resume"))
+            {
+                ButtonManager.instance.OnClickResume();
+            }
+            if (hit.transform.gameObject.name.Contains("Retry"))
+            {
+                ButtonManager.instance.OnClickRetry();
+            }
+            if (hit.transform.gameObject.name.Contains("SelectMenu"))
+            {
+                ButtonManager.instance.OnClickSelectMenu();
+            }
+            if (hit.transform.gameObject.name.Contains("ExitGame"))
+            {
+                ButtonManager.instance.OnClickExitGame();
+            }
+            return;
         }
+        //선택한 놈의 레이어가 UI이면 트리거 선택이 되게끔 하자.
 
     }
+
     void DropObj()
     {
         //만약 catchObj에 잡힌 물건이 없으면 이 함수를 빠져나가자
@@ -470,31 +416,12 @@ public class Right_Controller : MonoBehaviourPun, IPunObservable
             catchObj = null;
         }
     }
+
     void ThrowObj()
     {
         //리지드바디 컴포넌트 가져오자
         Rigidbody rb = catchObj.GetComponent<Rigidbody>();
         //조이스틱 오른쪽 + 던지는 힘 = 블록을 앞으로 던지게끔 효과를 내보자
         rb.velocity = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch) * throwPower;
-
-    }
-    void Button(float v)
-    {
-        if (ButtonManager.instance.settingUI.activeSelf && v > 0)
-        {
-            if (hit.transform.gameObject.name.Contains("Cancle"))
-            {
-                ButtonManager.instance.OnClickCancle();
-            }
-            if (hit.transform.gameObject.name.Contains("Retry"))
-            {
-                ButtonManager.instance.OnClickRetry();
-            }
-            if (hit.transform.gameObject.name.Contains("Other"))
-            {
-                ButtonManager.instance.OnClickOther();
-            }
-            return;
-        } // 만약 메뉴창이 활성화되고 Trigger버튼을 누르고 있지 않으면
     }
 }

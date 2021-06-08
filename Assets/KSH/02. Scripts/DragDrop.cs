@@ -8,54 +8,100 @@ public class DragDrop : MonoBehaviour
     bool isClick;
     Ray ray;
     RaycastHit hit;
-    
+    LineRenderer lr;
+
     void Start()
     {
+        lr = GetComponent<LineRenderer>();
 
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(1))
+        DrawGuideLine();
+        ObjectRay();
+    }
+
+    void DrawGuideLine()
+    {
+        //레이와 부딪힌 놈까지
+        if (Physics.Raycast(ray, out hit))
+        {
+            //거리를 구해서 라인을 그린다.
+            lr.SetPosition(0, transform.position);
+            lr.SetPosition(1, hit.point);
+        }
+        else
+        {
+            lr.SetPosition(0, transform.position);
+            lr.SetPosition(1, transform.position + transform.forward * 1);
+        }
+    }
+
+    void ObjectRay()
+    {
+        ray = new Ray(transform.position, transform.forward);
+        float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
+        if (v > 0)
         {
             isClick = true;
-            selectedPiece = null;
-            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            
-
-            if (Physics.Raycast(ray, out hit))
+            //selectedPiece = null;
+            if (Physics.Raycast(ray, out hit, 100))
             {
-
                 print(hit.transform.gameObject);
-                for (int i = 0; i < 37; i++)
+                selectedPiece = hit.transform.gameObject;
+                for (int i = 0; i < 36; i++)
                 {
-                    if (hit.transform.gameObject.name == ("Pieces_("+i+ ")"))
+                    int layer = 1 << LayerMask.NameToLayer("Puzzle");
+                    if (Physics.Raycast(ray, out hit, 100, layer))
                     {
-                        print(hit.transform.gameObject.name);
-                        selectedPiece = hit.transform.gameObject;
+                        //print(selectedPiece);
+                        selectedPiece.transform.position = new Vector3(hit.point.x, hit.point.y, -0.1f);                    //트리거 당긴 넘의 z축을 이동하지 않게 하고 싶다.
                     }
                 }
                 //마우스 우클릭을 했을때 
                 //클릭한 놈의 GameObject를 움직일 수 있게 하자
             }
-            else if (Input.GetMouseButtonUp(1))
+        }
+
+
+        if (ButtonManager.instance.settingUI.activeSelf && v > 0)
+        {
+            if (Physics.Raycast(ray, out hit))
             {
-                isClick = false;
-            }
-            if (isClick == true && selectedPiece != null)
-            {
-                ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                int layer = 1 << LayerMask.NameToLayer("Puzzle");
-                if(Physics.Raycast(ray, out hit))
+                if (hit.transform.gameObject.name.Contains("Resume"))
                 {
-                    if (!hit.transform.GetComponent<PiecesScripts>().InRightPosition)
-                    {
-                        selectedPiece = hit.transform.gameObject;
-                        //selectedPiece.GetComponent<PiecesScripts>().Selected = true;
-                        
-                    }
+                    ButtonManager.instance.OnClickResume();
                 }
+                if (hit.transform.gameObject.name.Contains("Retry"))
+                {
+                    ButtonManager.instance.OnClickRetry();
+                }
+                if (hit.transform.gameObject.name.Contains("SelectMenu"))
+                {
+                    ButtonManager.instance.OnClickSelectMenu();
+                }
+                if (hit.transform.gameObject.name.Contains("ExitGame"))
+                {
+                    ButtonManager.instance.OnClickExitGame();
+                }
+                return;
+
             }
+        }
+
+
+        else if (v < 0)
+        {
+            isClick = false;
         }
     }
 }
+
+
+
+
+
+
+
+
