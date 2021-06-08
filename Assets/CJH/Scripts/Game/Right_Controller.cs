@@ -8,8 +8,6 @@ public class Right_Controller : MonoBehaviour
     public static int preViewIndex;            //선택한 퍼즐의 프리 뷰
     public static PuzzleManager pr;            //선택한 퍼즐의 PuzzleManager
     public float throwPower = 3;
-    public Transform controlpos;
-
     Ray ray;
     RaycastHit hit;
     Transform catchObj;
@@ -20,23 +18,25 @@ public class Right_Controller : MonoBehaviour
     public GameObject shot;
     public GameObject pos;
     EffectSettings es;
-    
 
 
     GameObject SelectObj; // 선택한 놈 (승현)
     //클릭한 상태
     bool isClick;
+    //스타트캔버스
+    public GameObject StartCanvas;
+    //행성들
+    public GameObject Star;
+    //스타트 화면을 놓을 변수
+    public GameObject Scene_Start;
+
 
     void Start()
     {
-        GameObject pre = GameObject.Find("PreView");
-        for(int i = 0; i < pre.transform.childCount; i++)
-        {
-            print(pre.transform.GetChild(i).name);
-            preView[i] = pre.transform.GetChild(i).gameObject;
-        }
         lr = GetComponent<LineRenderer>();
         es = shot.GetComponent<EffectSettings>();
+
+
     }
 
     void Update()
@@ -66,30 +66,12 @@ public class Right_Controller : MonoBehaviour
 
     void ModeA_RightController()                             //A 모드 오른손 컨트롤러
     {
-        
+
         ray = new Ray(transform.position, transform.forward);
 
         if (Physics.Raycast(ray, out hit, 100))
         {
             PuzzleControl();
-        }
-
-        if (pr == null) return;
-        if (pr.state == PuzzleManager.PuzzleState.Revolution)return;
-        if (OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch))
-        {
-            pr.state = PuzzleManager.PuzzleState.Control;
-            controlpos.position = transform.position;
-        }
-        if (OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch))  //A 버튼 클릭 중
-        {
-            Vector3 dir = transform.position - controlpos.position;
-            pr.controlpos = dir;
-        }
-        else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch)) //A 버튼 Up
-        {
-            rigid.isKinematic = true;
-            pr.state = PuzzleManager.PuzzleState.Catch;                                                         //프리 뷰 생성 금지
         }
     }
     void PuzzleControl()
@@ -97,17 +79,21 @@ public class Right_Controller : MonoBehaviour
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B 버튼
         if (ButtonManager.instance.settingUI.activeSelf && v > 0)
         {
-            if (hit.transform.gameObject.name.Contains("Cancle"))
+            if (hit.transform.gameObject.name.Contains("Resume"))
             {
-                ButtonManager.instance.OnClickCancle();
+                ButtonManager.instance.OnClickResume();
             }
             if (hit.transform.gameObject.name.Contains("Retry"))
             {
                 ButtonManager.instance.OnClickRetry();
             }
-            if (hit.transform.gameObject.name.Contains("Other"))
+            if (hit.transform.gameObject.name.Contains("SelectMenu"))
             {
-                ButtonManager.instance.OnClickOther();
+                ButtonManager.instance.OnClickSelectMenu();
+            }
+            if (hit.transform.gameObject.name.Contains("ExitGame"))
+            {
+                ButtonManager.instance.OnClickExitGame();
             }
             return;
         } // 만약 메뉴창이 활성화되고 Trigger버튼을 누르고 있지 않으면
@@ -116,16 +102,30 @@ public class Right_Controller : MonoBehaviour
 
         if (pr != null)                       //선택된 블록이 없을 시 값 참조에 오류 방지
         {
+            if (OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch))  //A 버튼 클릭 중
+            {
+                Vector3 dir = transform.position - hit.transform.position;
+                pr.Move(dir, 0.025f);
+            }
+            else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch)) //A 버튼 Up
+            {
+                pr.state = PuzzleManager.PuzzleState.Revolution;                      //공전 상태로 전환
+                pr = null;                                                            //프리 뷰 생성 금지
+            }
+
             if (OVRInput.Get(OVRInput.Button.Two, OVRInput.Controller.RTouch))
             {
                 if (hit.transform.name == "Canvas")                  //캔퍼스일 때 프리 뷰 생성
                 {
+                    preView[preViewIndex].SetActive(true);
+
                     int x = (int)hit.point.x;
                     int y = (int)hit.point.y;
-                    preView[preViewIndex].SetActive(true);
 
                     preView[preViewIndex].transform.position = new Vector2(x, y);
                 }
+                else
+                    preView[preViewIndex].SetActive(false);
             }
             else if (OVRInput.GetUp(OVRInput.Button.Two, OVRInput.Controller.RTouch))
             {
@@ -137,7 +137,6 @@ public class Right_Controller : MonoBehaviour
                 }
                 preView[preViewIndex].SetActive(false);
                 pr = null;
-                
             }
         }
     }
@@ -145,28 +144,28 @@ public class Right_Controller : MonoBehaviour
     void ModeB_RightController()            //B 모드 오른손 컨트롤러
     {
 
-        
-        CatchObj();
+        CatchObj_B();
 
     }
     void ModeC_RightController()            //C 모드 오른손 컨트롤러
     {
 
-       
         CatchObj();
 
     }
     void ModeD_RightController()            //D 모드 오른손 컨트롤러
     {
 
-      
         CatchObj();
 
     }
 
     void Start_Select_RightController()         // Start & Select Mode 오른손 컨트롤러
     {
+
+
         OnClickButtonUI();
+
     }
 
     void Shot()
@@ -176,6 +175,7 @@ public class Right_Controller : MonoBehaviour
         pos.transform.position = transform.position;
         es.Target = hit.transform.gameObject;
     }
+
     public void PuzzleChoiceChange(GameObject go)                   //Shot 발사 후 Catch 상태로 전환
     {
         for (int i = 0; i < preView.Length; i++)
@@ -195,18 +195,21 @@ public class Right_Controller : MonoBehaviour
     }
     void DrawGuideLine()
     {
+        //ray = new Ray(transform.position, transform.forward);
         //레이와 부딪힌 놈까지
         if (Physics.Raycast(ray, out hit))
         {
             //거리를 구해서 라인을 그린다.
             lr.SetPosition(0, transform.position);
             lr.SetPosition(1, hit.point);
+            RotateButton(hit.transform.gameObject);
         }
         else
         {
             lr.SetPosition(0, transform.position);
             lr.SetPosition(1, transform.position + transform.forward * 1);
-            preView[preViewIndex].SetActive(false);
+            RotateButton(null);
+
         }
     }
 
@@ -215,12 +218,8 @@ public class Right_Controller : MonoBehaviour
         ray = new Ray(transform.position, transform.forward);
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B 버튼
 
-
-
-        if (v > 0)
+        if (v > 0 && Physics.Raycast(ray, out hit))
         {
-            //int layer = 1 << LayerMask.NameToLayer("UI");
-            //if (Physics.Raycast(ray, out hit, 1000, layer))
             if (hit.transform.gameObject.name.Contains("StartButton"))
             {
                 ButtonManager.instance.OnClickStart();
@@ -242,7 +241,61 @@ public class Right_Controller : MonoBehaviour
                 ButtonManager.instance.OnClickMode_D();
             }
         }
+
+        if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+        {
+
+            //print(hit.transform.gameObject.name);
+            //Saturn 행성을 클릭해서 StartScene을 활성화 하고 싶다.
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.transform.gameObject.name.Contains("Saturn"))
+                {
+                    //행성들 다 사라지게 한다.
+                    Star.SetActive(false);
+                    StartCanvas.SetActive(true);
+                    StartCanvas.transform.position = Scene_Start.transform.position;
+                }
+            }
+        }
     }
+
+
+    public GameObject focusBtn;
+    void RotateButton(GameObject btn)
+    {
+        if (btn == null || btn.name.Contains("Mode") == false)
+        {
+            StopRotateButton();
+        }
+
+        else if (btn.name.Contains("Mode"))
+        {
+            if(focusBtn != btn)
+            {
+                StopRotateButton();
+                iTween.RotateBy(btn.transform.GetChild(0).gameObject, iTween.Hash(
+                    "x", .25, 
+                    "easytype", iTween.EaseType.easeInBounce,  
+                    "looptype", iTween.LoopType.pingPong, 
+                    "name", btn.name));
+            }
+            focusBtn = btn;
+        }
+    }
+
+    
+    void StopRotateButton()
+    {
+        if (focusBtn == null) return;
+
+        iTween.StopByName(focusBtn.name);
+        focusBtn.transform.GetChild(0).transform.localEulerAngles = Vector3.zero;
+        focusBtn = null;
+    }
+
+
+
 
     void CatchObj()
     {
@@ -253,24 +306,30 @@ public class Right_Controller : MonoBehaviour
 
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
         //오른쪽 B버튼을 누르고 있으면
-
-        if (ButtonManager.instance.settingUI.activeSelf && v > 0)
+        if(Physics.Raycast(ray, out hit))
         {
-            if (hit.transform.gameObject.name.Contains("Cancle"))
+            if (ButtonManager.instance.settingUI.activeSelf && v > 0)
             {
-                ButtonManager.instance.OnClickCancle();
+                if (hit.transform.gameObject.name.Contains("Resume"))
+                {
+                    ButtonManager.instance.OnClickResume();
+                }
+                if (hit.transform.gameObject.name.Contains("Retry"))
+                {
+                    ButtonManager.instance.OnClickRetry();
+                }
+                if (hit.transform.gameObject.name.Contains("SelectMenu"))
+                {
+                    ButtonManager.instance.OnClickSelectMenu();
+                }
+                if (hit.transform.gameObject.name.Contains("ExitGame"))
+                {
+                    ButtonManager.instance.OnClickExitGame();
+                }
+                return;
             }
-            if (hit.transform.gameObject.name.Contains("Retry"))
-            {
-                ButtonManager.instance.OnClickRetry();
-            }
-            if (hit.transform.gameObject.name.Contains("Other"))
-            {
-                ButtonManager.instance.OnClickOther();
-            }
-            return;
         }
-
+        
 
         if (v > 0)
         {
@@ -280,36 +339,62 @@ public class Right_Controller : MonoBehaviour
             {
                 print("isClick");
                 SelectObj = hit.transform.gameObject;
-                
-
             }
         }
+
         else if (v < 0)
         {
             isClick = false;
         }
-        if(isClick == true && SelectObj != null)
+
+        if (isClick == true && SelectObj != null)
         {
-            ray = new Ray(transform.position, transform.forward);
             int layer = 1 << LayerMask.NameToLayer("Puzzle");
-            if(Physics.Raycast(ray, out hit, 100, layer))
+            if (Physics.Raycast(ray, out hit, 100, layer))
             {
                 SelectObj.transform.position = hit.point;
-                //hit.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-               
             }
         }
-        //문제는 오래 쥐고 있을 수록 퍼즐조각이 앞으로 다가와진다.
+    }
 
-        if (OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch))
-        {
-            
-        }
-        if (OVRInput.Get(OVRInput.Button.Two, OVRInput.Controller.RTouch))
-        {
+    void CatchObj_B()
+    {
+        ray = new Ray(transform.position, transform.forward);
+        int layer1 = 1 << LayerMask.NameToLayer("Puzzle");
 
-            
+        if (Physics.Raycast(ray, out hit, 100, layer1))
+        {
+            if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+            {
+                //B번 물체
+                print("rotate complete");
+                hit.transform.Rotate(0, 0, 90);
+            }
         }
+
+        float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
+
+        if (ButtonManager.instance.settingUI.activeSelf && v > 0 && Physics.Raycast(ray, out hit))
+        {
+            if (hit.transform.gameObject.name.Contains("Resume"))
+            {
+                ButtonManager.instance.OnClickResume();
+            }
+            if (hit.transform.gameObject.name.Contains("Retry"))
+            {
+                ButtonManager.instance.OnClickRetry();
+            }
+            if (hit.transform.gameObject.name.Contains("SelectMenu"))
+            {
+                ButtonManager.instance.OnClickSelectMenu();
+            }
+            if (hit.transform.gameObject.name.Contains("ExitGame"))
+            {
+                ButtonManager.instance.OnClickExitGame();
+            }
+            return;
+        }
+        //선택한 놈의 레이어가 UI이면 트리거 선택이 되게끔 하자.
 
     }
 
@@ -338,8 +423,5 @@ public class Right_Controller : MonoBehaviour
         Rigidbody rb = catchObj.GetComponent<Rigidbody>();
         //조이스틱 오른쪽 + 던지는 힘 = 블록을 앞으로 던지게끔 효과를 내보자
         rb.velocity = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch) * throwPower;
-
     }
-
-
 }
