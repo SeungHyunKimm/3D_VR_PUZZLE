@@ -267,6 +267,7 @@ public class PlayerControl : MonoBehaviourPun, IPunObservable
         //    {
         for (int i = 0; i < preView.Length; i++)
         {
+            print(preView[i].name + name);
             if (preView[i].name == name)     //프리뷰 인덱스 저장 및 Catch상태로 변환 
             {
                 if (preView[preViewIndex].name != puzzles[i].name && pr != null)
