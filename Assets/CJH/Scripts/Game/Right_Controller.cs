@@ -33,6 +33,8 @@ public class Right_Controller : MonoBehaviour
 
     void Start()
     {
+
+
         lr = GetComponent<LineRenderer>();
         es = shot.GetComponent<EffectSettings>();
 
@@ -195,22 +197,22 @@ public class Right_Controller : MonoBehaviour
     }
     void DrawGuideLine()
     {
-        //ray = new Ray(transform.position, transform.forward);
+        ray = new Ray(transform.position, transform.forward);
         //레이와 부딪힌 놈까지
-        //if (Physics.Raycast(ray, out hit))
-        //{
-        //    //거리를 구해서 라인을 그린다.
-        //    lr.SetPosition(0, transform.position);
-        //    lr.SetPosition(1, hit.point);
-        //    RotateButton(hit.transform.gameObject);
-        //}
-        //else
-        //{
-        //    lr.SetPosition(0, transform.position);
-        //    lr.SetPosition(1, transform.position + transform.forward * 1);
-        //    RotateButton(null);
+        if (Physics.Raycast(ray, out hit))
+        {
+            //거리를 구해서 라인을 그린다.
+            lr.SetPosition(0, transform.position);
+            lr.SetPosition(1, hit.point);
+            RotateButton(hit.transform.gameObject);
+        }
+        else
+        {
+            lr.SetPosition(0, transform.position);
+            lr.SetPosition(1, transform.position + transform.forward * 1);
+            RotateButton(null);
 
-        //}
+        }
     }
 
     void OnClickButtonUI() //승현 StartScene에서 사용할 함수 - 버튼 누를 시 다음 씬 전환
@@ -261,38 +263,38 @@ public class Right_Controller : MonoBehaviour
     }
 
 
-    //public GameObject focusBtn;
-    //void RotateButton(GameObject btn)
-    //{
-    //    if (btn == null || btn.name.Contains("Mode") == false)
-    //    {
-    //        StopRotateButton();
-    //    }
+    public GameObject focusBtn;
+    void RotateButton(GameObject btn)
+    {
+        if (btn == null || btn.name.Contains("Mode") == false)
+        {
+            StopRotateButton();
+        }
 
-    //    else if (btn.name.Contains("Mode"))
-    //    {
-    //        if(focusBtn != btn)
-    //        {
-    //            StopRotateButton();
-    //            iTween.RotateBy(btn.transform.GetChild(0).gameObject, iTween.Hash(
-    //                "x", .25, 
-    //                "easytype", iTween.EaseType.easeInBounce,  
-    //                "looptype", iTween.LoopType.pingPong, 
-    //                "name", btn.name));
-    //        }
-    //        focusBtn = btn;
-    //    }
-    //}
+        else if (btn.name.Contains("Mode"))
+        {
+            if (focusBtn != btn)
+            {
+                StopRotateButton();
+                iTween.RotateBy(btn.transform.GetChild(0).gameObject, iTween.Hash(
+                    "x", .25,
+                    "easytype", iTween.EaseType.easeInBounce,
+                    "looptype", iTween.LoopType.pingPong,
+                    "name", btn.name));
+            }
+            focusBtn = btn;
+        }
+    }
 
-    
-    //void StopRotateButton()
-    //{
-    //    if (focusBtn == null) return;
 
-    //    iTween.StopByName(focusBtn.name);
-    //    focusBtn.transform.GetChild(0).transform.localEulerAngles = Vector3.zero;
-    //    focusBtn = null;
-    //}
+    void StopRotateButton()
+    {
+        if (focusBtn == null) return;
+
+        iTween.StopByName(focusBtn.name);
+        focusBtn.transform.GetChild(0).transform.localEulerAngles = Vector3.zero;
+        focusBtn = null;
+    }
 
 
 
