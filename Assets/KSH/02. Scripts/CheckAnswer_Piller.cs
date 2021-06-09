@@ -18,7 +18,7 @@ public class CheckAnswer_Piller : MonoBehaviour
 
         GameObject bk = GameObject.Find("BlockManager");
         ga = bk.GetComponent<BlockManager>();
-        //GetComponent<BlockState_Manager>();
+        
         
 
     }
