@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class Photon_PlayerMove : MonoBehaviour
 {
 
@@ -11,9 +13,11 @@ public class Photon_PlayerMove : MonoBehaviour
     public GameObject qwertyKey;
     int buttonCnt = 0;
 
+
+
+
     void Start()
     {
-
 
 
 
@@ -21,6 +25,8 @@ public class Photon_PlayerMove : MonoBehaviour
 
     void Update()
     {
+
+
         Vector2 jsL = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.LTouch);
         Vector3 dir = transform.forward * jsL.y + transform.right * jsL.x;
         dir.Normalize();
@@ -32,13 +38,13 @@ public class Photon_PlayerMove : MonoBehaviour
 
 
         LTouchControl();
-
+        
+    
     }
+
 
     void LTouchControl()
     {
-
-
         //L Controller의 X 버튼을 누르면 키보드 UI가 나오게끔 설정하자.
         if (OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch))
         {
@@ -47,10 +53,6 @@ public class Photon_PlayerMove : MonoBehaviour
             //버튼 입력 횟수
             buttonCnt++;
         }
-
-        
-
-
         if (buttonCnt == 2)
         {
             //키보드 UI 없애고
@@ -59,8 +61,5 @@ public class Photon_PlayerMove : MonoBehaviour
             buttonCnt = 0;
 
         }
-
-
-
     }
 }

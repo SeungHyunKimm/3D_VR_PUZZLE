@@ -48,6 +48,5 @@ namespace VRKB
 
             return keyConfig;
         }
-
     }
 }
