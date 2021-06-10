@@ -22,7 +22,6 @@ public class ConnectManager : MonoBehaviourPunCallbacks
         //    Debug.LogWarning("아이디를 입력하세요.");
         //}
 
-
         PhotonNetwork.GameVersion = gameVersion;
         PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.ConnectUsingSettings();
