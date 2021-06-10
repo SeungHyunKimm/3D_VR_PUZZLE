@@ -47,7 +47,7 @@ public class Right_Controller_KSH_Photon : MonoBehaviour
         {
             case ButtonManager.ButtonState.Start:
             case ButtonManager.ButtonState.Select:
-                Start_Select_RightController();
+                //Start_Select_RightController();
                 break;
 
             case ButtonManager.ButtonState.Mode_A:
@@ -262,7 +262,7 @@ public class Right_Controller_KSH_Photon : MonoBehaviour
     //}
 
 
-    public GameObject focusBtn;
+    GameObject focusBtn;
     void RotateButton(GameObject btn)
     {
         if (btn == null || btn.name.Contains("Mode") == false)
@@ -356,6 +356,8 @@ public class Right_Controller_KSH_Photon : MonoBehaviour
                 SelectObj.transform.position = new Vector3(hit.point.x, hit.point.y, -0.1f);
             }
         }
+
+
     }
     public bool isClear;
     void CatchObj_B()

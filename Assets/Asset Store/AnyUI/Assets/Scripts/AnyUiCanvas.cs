@@ -50,7 +50,7 @@ namespace AnyUI
             if (Event.current != null && (Event.current.commandName == "SoftDelete" || Event.current.commandName == "Delete"))
             {
                 //destroy rendertexture,  camera
-                AssetDatabase.DeleteAsset("Assets/AnyUIRenderTexturesAndMaterials/" + eventCamera.targetTexture.name + ".renderTexture");
+                //AssetDatabase.DeleteAsset("Assets/AnyUIRenderTexturesAndMaterials/" + eventCamera.targetTexture.name + ".renderTexture");
                 DestroyImmediate(eventCamera);
             }
             base.OnDestroy();

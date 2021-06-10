@@ -6,7 +6,7 @@ using Photon.Realtime;
 
 
 
-public class Photon_PlayerMove : MonoBehaviourPun , IPunObservable
+public class Photon_PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
 {
 
     //플레이어 속도
@@ -15,10 +15,23 @@ public class Photon_PlayerMove : MonoBehaviourPun , IPunObservable
     public GameObject qwertyKey;
     int buttonCnt = 0;
 
+    //상대방 위치, 회전값
+    Vector3 otherPos;
+    Quaternion otherRot;
+
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        throw new System.NotImplementedException();
+        if (stream.IsWriting)
+        {
+            stream.SendNext(transform.position);
+            stream.SendNext(transform.rotation);
+        }
+        if (stream.IsReading)
+        {
+            otherPos = (Vector3)stream.ReceiveNext();
+            otherRot = (Quaternion)stream.ReceiveNext();
+        }
     }
 
     void Start()
@@ -31,7 +44,12 @@ public class Photon_PlayerMove : MonoBehaviourPun , IPunObservable
     void Update()
     {
 
-            
+
+
+
+        if (photonView.IsMine)
+        {
+
         Vector2 jsL = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.LTouch);
         Vector3 dir = transform.forward * jsL.y + transform.right * jsL.x;
         dir.Normalize();
@@ -43,27 +61,43 @@ public class Photon_PlayerMove : MonoBehaviourPun , IPunObservable
 
 
         LTouchControl();
-        
-    
+
+        }
+
+        else
+        {
+            transform.position = Vector3.Lerp(transform.position, otherPos, 0.2f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, otherRot, 0.2f);
+        }
     }
 
 
     void LTouchControl()
     {
-        //L Controller의 X 버튼을 누르면 키보드 UI가 나오게끔 설정하자.
-        if (OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch))
+        //로비씬에서 키보드 UI부르는 셋팅
+
+        ////L Controller의 X 버튼을 누르면 키보드 UI가 나오게끔 설정하자.
+        //if (OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch))
+        //{
+        //    //키보드 UI 나타내기
+        //    qwertyKey.SetActive(true);
+        //    //버튼 입력 횟수
+        //    buttonCnt++;
+        //}
+        //if (buttonCnt == 2)
+        //{
+        //    //키보드 UI 없애고
+        //    qwertyKey.SetActive(false);
+        //    //버튼 횟수 초기화하자
+        //    buttonCnt = 0;
+
+        //}
+
+
+        if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch))
         {
-            //키보드 UI 나타내기
-            qwertyKey.SetActive(true);
-            //버튼 입력 횟수
-            buttonCnt++;
-        }
-        if (buttonCnt == 2)
-        {
-            //키보드 UI 없애고
-            qwertyKey.SetActive(false);
-            //버튼 횟수 초기화하자
-            buttonCnt = 0;
+            ButtonManager.instance.settingUI.SetActive(true);
+
 
         }
     }

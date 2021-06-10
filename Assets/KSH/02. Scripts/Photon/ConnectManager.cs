@@ -14,12 +14,14 @@ public class ConnectManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        Connect_ModeD();
+        
+       Connect_ModeD();
         
     }
 
     public void Connect_ModeD()
     {
+
         //만약 nickname의 길이가 0이면
         //if (nickname.text.Length == 0)
         //{

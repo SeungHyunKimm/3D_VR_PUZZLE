@@ -6,11 +6,15 @@ using Photon.Realtime;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
+
     void Start()
     {
 
-
+        
         CreateRoom();
+
+
+
     }
 
     void Update()
@@ -21,6 +25,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
     public void CreateRoom()
     {
+
         RoomOptions roomOption = new RoomOptions();
         roomOption.MaxPlayers = 2;
         PhotonNetwork.JoinOrCreateRoom("±è½ÂÇö", roomOption, TypedLobby.Default);
@@ -36,6 +41,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public void JoinRoom()
     {
+
         print("JoinRoom is completed");
         print(PhotonNetwork.CurrentRoom.Name);
         PhotonNetwork.JoinRoom("±è½ÂÇö");
