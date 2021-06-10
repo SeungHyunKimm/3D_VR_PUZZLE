@@ -45,7 +45,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         print("规 立加 己傍");
         print(PhotonNetwork.CurrentRoom.Name);
-        PhotonNetwork.LoadLevel("KSH_PuzzleMode_D_Photon");
+        PhotonNetwork.LoadLevel("03. KSH_PuzzleMode_D_Photon");
     }
 
 }

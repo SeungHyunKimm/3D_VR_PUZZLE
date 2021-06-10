@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
 
 
-public class Photon_PlayerMove : MonoBehaviour
+public class Photon_PlayerMove : MonoBehaviourPun , IPunObservable
 {
 
     //플레이어 속도
@@ -14,7 +16,10 @@ public class Photon_PlayerMove : MonoBehaviour
     int buttonCnt = 0;
 
 
-
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        throw new System.NotImplementedException();
+    }
 
     void Start()
     {
@@ -26,7 +31,7 @@ public class Photon_PlayerMove : MonoBehaviour
     void Update()
     {
 
-
+            
         Vector2 jsL = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.LTouch);
         Vector3 dir = transform.forward * jsL.y + transform.right * jsL.x;
         dir.Normalize();
@@ -62,4 +67,6 @@ public class Photon_PlayerMove : MonoBehaviour
 
         }
     }
+
+
 }
