@@ -12,6 +12,11 @@ public class ConnectManager : MonoBehaviourPunCallbacks
     public InputField nickname;
 
 
+    private void Start()
+    {
+        Connect_ModeD();
+        
+    }
 
     public void Connect_ModeD()
     {
@@ -42,36 +47,11 @@ public class ConnectManager : MonoBehaviourPunCallbacks
     {
         print("OnJoinedLobby");
         PhotonNetwork.LoadLevel("02. Photon_Main_LobbyScene");
-        //CreateRoom();
-    }
-    public override void OnCreatedRoom()
-    {
-        print("规 积己 己傍");
+        
     }
 
     //规 立加 己傍
-    public override void OnJoinedRoom()
-    {
-        print("规 立加 己傍");
-        print(PhotonNetwork.CurrentRoom.Name);
-    }
-
-    public void CreateRoom()
-    {
-        RoomOptions roomOption = new RoomOptions();
-        roomOption.MaxPlayers = 2;
-        PhotonNetwork.JoinOrCreateRoom("辫铰泅", roomOption, TypedLobby.Default);
-    }
-
-    public void JoinRoom()
-    {
-        print("JoinRoom is completed");
-        print(PhotonNetwork.CurrentRoom.Name);
-        PhotonNetwork.LoadLevel("KSH_PuzzleMode_D_Photon");
-    }
 
 
-
-
-
+    
 }

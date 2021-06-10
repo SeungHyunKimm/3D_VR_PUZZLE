@@ -37,7 +37,6 @@ public class Raycast_BothHand : MonoBehaviour
                 print(hit.transform.gameObject.name);
 
             }
-
         }
     }
 
