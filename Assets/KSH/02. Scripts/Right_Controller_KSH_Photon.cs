@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Right_Controller : MonoBehaviour
+public class Right_Controller_KSH_Photon : MonoBehaviour
 {
     public static Rigidbody rigid;             //선택한 퍼즐의 RigidBody
     public static int preViewIndex;            //선택한 퍼즐의 프리 뷰
@@ -246,7 +246,6 @@ public class Right_Controller : MonoBehaviour
 
         if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
         {
-
             //print(hit.transform.gameObject.name);
             //Saturn 행성을 클릭해서 StartScene을 활성화 하고 싶다.
             if (Physics.Raycast(ray, out hit))
@@ -426,6 +425,4 @@ public class Right_Controller : MonoBehaviour
         //조이스틱 오른쪽 + 던지는 힘 = 블록을 앞으로 던지게끔 효과를 내보자
         rb.velocity = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch) * throwPower;
     }
-
-
 }

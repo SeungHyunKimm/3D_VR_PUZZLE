@@ -50,7 +50,6 @@ public class ConnectManager : MonoBehaviourPunCallbacks
         
     }
 
-    //规 立加 己傍
 
 
     
