@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class Right_Controller_KSH_Photon : MonoBehaviour
+public class Right_Controller_KSH_Photon : MonoBehaviourPunCallbacks
 {
     public static Rigidbody rigid;             //선택한 퍼즐의 RigidBody
     public static int preViewIndex;            //선택한 퍼즐의 프리 뷰
@@ -23,12 +24,12 @@ public class Right_Controller_KSH_Photon : MonoBehaviour
     GameObject SelectObj; // 선택한 놈 (승현)
     //클릭한 상태
     bool isClick;
-    ////스타트캔버스
-    //public GameObject StartCanvas;
-    ////행성들
-    //public GameObject Star;
-    ////스타트 화면을 놓을 변수
-    //public GameObject Scene_Start;
+    //스타트캔버스
+    public GameObject StartCanvas;
+    //행성들
+    public GameObject Star;
+    //스타트 화면을 놓을 변수
+    public GameObject Scene_Start;
 
 
     void Start()
@@ -157,16 +158,12 @@ public class Right_Controller_KSH_Photon : MonoBehaviour
     }
     void ModeD_RightController()            //D 모드 오른손 컨트롤러
     {
-
-        CatchObj();
-
+        CatchObj_D();
     }
 
     void Start_Select_RightController()         // Start & Select Mode 오른손 컨트롤러
     {
-
-
-        //OnClickButtonUI();
+        OnClickButtonUI();
 
     }
 
@@ -195,71 +192,99 @@ public class Right_Controller_KSH_Photon : MonoBehaviour
     //        }
     //    }
     //}
+
+
     void DrawGuideLine()
     {
-        ray = new Ray(transform.position, transform.forward);
-        //레이와 부딪힌 놈까지
-        if (Physics.Raycast(ray, out hit))
+        if (PhotonNetwork.IsMasterClient)
         {
-            //거리를 구해서 라인을 그린다.
-            lr.SetPosition(0, transform.position);
-            lr.SetPosition(1, hit.point);
-            //RotateButton(hit.transform.gameObject);
-        }
-        else
-        {
-            lr.SetPosition(0, transform.position);
-            lr.SetPosition(1, transform.position + transform.forward * 1);
-            //RotateButton(null);
+            ray = new Ray(transform.position, transform.forward);
+            //레이와 부딪힌 놈까지
 
+            if (Physics.Raycast(ray, out hit))
+            {
+                //거리를 구해서 라인을 그린다.
+                lr.SetPosition(0, transform.position);
+                lr.SetPosition(1, hit.point);
+                //RotateButton(hit.transform.gameObject);
+            }
+
+            else
+            {
+                lr.SetPosition(0, transform.position);
+                lr.SetPosition(1, transform.position + transform.forward * 1);
+                //RotateButton(null);
+            }
         }
     }
 
-    //void OnClickButtonUI() //승현 StartScene에서 사용할 함수 - 버튼 누를 시 다음 씬 전환
-    //{
-    //    ray = new Ray(transform.position, transform.forward);
-    //    float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B 버튼
+    ////void DrawGuideLine_Photon()
+    ////{
+    ////    ray = new Ray(transform.position, transform.forward);
+    ////    레이와 부딪힌 놈까지
 
-    //    if (v > 0 && Physics.Raycast(ray, out hit))
-    //    {
-    //        if (hit.transform.gameObject.name.Contains("StartButton"))
-    //        {
-    //            ButtonManager.instance.OnClickStart();
-    //        }
-    //        if (hit.transform.gameObject.name.Contains("A_Mode"))
-    //        {
-    //            ButtonManager.instance.OnClickMode_A();
-    //        }
-    //        if (hit.transform.gameObject.name.Contains("B_Mode"))
-    //        {
-    //            ButtonManager.instance.OnClickMode_B();
-    //        }
-    //        if (hit.transform.gameObject.name.Contains("C_Mode"))
-    //        {
-    //            ButtonManager.instance.OnClickMode_C();
-    //        }
-    //        if (hit.transform.gameObject.name.Contains("D_Mode"))
-    //        {
-    //            ButtonManager.instance.OnClickMode_D();
-    //        }
-    //    }
+    ////        if (Physics.Raycast(ray, out hit))
+    ////    {
+    ////        거리를 구해서 라인을 그린다.
+    ////            lr.SetPosition(0, transform.position);
+    ////        lr.SetPosition(1, hit.point);
+    ////        RotateButton(hit.transform.gameObject);
+    ////    }
 
-    //    if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
-    //    {
-    //        //print(hit.transform.gameObject.name);
-    //        //Saturn 행성을 클릭해서 StartScene을 활성화 하고 싶다.
-    //        if (Physics.Raycast(ray, out hit))
-    //        {
-    //            if (hit.transform.gameObject.name.Contains("Saturn"))
-    //            {
-    //                //행성들 다 사라지게 한다.
-    //                Star.SetActive(false);
-    //                StartCanvas.SetActive(true);
-    //                StartCanvas.transform.position = Scene_Start.transform.position;
-    //            }
-    //        }
-    //    }
-    //}
+    ////    else
+    ////    {
+    ////        lr.SetPosition(0, transform.position);
+    ////        lr.SetPosition(1, transform.position + transform.forward * 1);
+    ////        RotateButton(null);
+
+    ////    }
+    ////}
+
+    void OnClickButtonUI() //승현 StartScene에서 사용할 함수 - 버튼 누를 시 다음 씬 전환
+    {
+        ray = new Ray(transform.position, transform.forward);
+        float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B 버튼
+
+        if (v > 0 && Physics.Raycast(ray, out hit))
+        {
+            if (hit.transform.gameObject.name.Contains("StartButton"))
+            {
+                ButtonManager.instance.OnClickStart();
+            }
+            if (hit.transform.gameObject.name.Contains("A_Mode"))
+            {
+                ButtonManager.instance.OnClickMode_A();
+            }
+            if (hit.transform.gameObject.name.Contains("B_Mode"))
+            {
+                ButtonManager.instance.OnClickMode_B();
+            }
+            if (hit.transform.gameObject.name.Contains("C_Mode"))
+            {
+                ButtonManager.instance.OnClickMode_C();
+            }
+            if (hit.transform.gameObject.name.Contains("D_Mode"))
+            {
+                ButtonManager.instance.OnClickMode_D();
+            }
+        }
+
+        if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+        {
+            //print(hit.transform.gameObject.name);
+            //Saturn 행성을 클릭해서 StartScene을 활성화 하고 싶다.
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.transform.gameObject.name.Contains("Saturn"))
+                {
+                    //행성들 다 사라지게 한다.
+                    Star.SetActive(false);
+                    StartCanvas.SetActive(true);
+                    StartCanvas.transform.position = Scene_Start.transform.position;
+                }
+            }
+        }
+    }
 
 
     GameObject focusBtn;
@@ -308,7 +333,7 @@ public class Right_Controller_KSH_Photon : MonoBehaviour
 
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
         //오른쪽 B버튼을 누르고 있으면
-        if(Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit))
         {
             if (ButtonManager.instance.settingUI.activeSelf && v > 0)
             {
@@ -331,7 +356,7 @@ public class Right_Controller_KSH_Photon : MonoBehaviour
                 return;
             }
         }
-        
+
 
         if (v > 0)
         {
@@ -360,6 +385,76 @@ public class Right_Controller_KSH_Photon : MonoBehaviour
 
 
     }
+
+
+    void CatchObj_D()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            isClick = true;
+            SelectObj = null;
+            //레이를 발사하여
+            ray = new Ray(transform.position, transform.forward);
+            float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
+            //오른쪽 B버튼을 누르고 있으면
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (ButtonManager.instance.settingUI.activeSelf && v > 0)
+                {
+                    if (hit.transform.gameObject.name.Contains("Resume"))
+                    {
+                        ButtonManager.instance.OnClickResume();
+                    }
+                    if (hit.transform.gameObject.name.Contains("Retry"))
+                    {
+                        ButtonManager.instance.OnClickRetry();
+                    }
+                    if (hit.transform.gameObject.name.Contains("SelectMenu"))
+                    {
+                        ButtonManager.instance.OnClickSelectMenu();
+                    }
+                    if (hit.transform.gameObject.name.Contains("ExitGame"))
+                    {
+                        ButtonManager.instance.OnClickExitGame();
+                    }
+                    return;
+                }
+            }
+
+
+            if (v > 0)
+            {
+                int layer = 1 << LayerMask.NameToLayer("Puzzle");
+                //부딪힌 놈의 레이어가 Puzzle이면
+                if (Physics.Raycast(ray, out hit, 100, layer))
+                {
+                    print("isClick");
+                    SelectObj = hit.transform.gameObject;
+                }
+            }
+
+            else if (v < 0)
+            {
+                isClick = false;
+            }
+
+            if (isClick == true && SelectObj != null)
+            {
+                int layer = 1 << LayerMask.NameToLayer("Puzzle");
+                if (Physics.Raycast(ray, out hit, 100, layer))
+                {
+                    SelectObj.transform.position = new Vector3(hit.point.x, hit.point.y, -0.1f);
+                }
+            }
+
+        }
+
+    }
+
+
+
+
+
     public bool isClear;
     void CatchObj_B()
     {
