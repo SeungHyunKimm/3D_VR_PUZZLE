@@ -5,7 +5,7 @@ using Photon.Pun;
 
 
 
-public class Photon_PlayerMove : MonoBehaviourPun, IPunObservable
+public class Photon_PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
 {
 
     //플레이어 속도
@@ -36,6 +36,19 @@ public class Photon_PlayerMove : MonoBehaviourPun, IPunObservable
         }
 
 
+    }
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(transform.position);
+            stream.SendNext(transform.rotation);
+        }
+        if (stream.IsReading)
+        {
+            otherPos = (Vector3)stream.ReceiveNext();
+            otherRot = (Quaternion)stream.ReceiveNext();
+        }
     }
 
     void Update()
@@ -68,19 +81,7 @@ public class Photon_PlayerMove : MonoBehaviourPun, IPunObservable
         }
     }
 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting)
-        {
-            stream.SendNext(transform.position);
-            stream.SendNext(transform.rotation);
-        }
-        if (stream.IsReading)
-        {
-            otherPos = (Vector3)stream.ReceiveNext();
-            otherRot = (Quaternion)stream.ReceiveNext();
-        }
-    }
+
     void LTouchControl()
     {
         //로비씬에서 키보드 UI부르는 셋팅
@@ -102,12 +103,11 @@ public class Photon_PlayerMove : MonoBehaviourPun, IPunObservable
 
         }
 
-        if (photonView.IsMine)
+
+        if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch))
         {
-            if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch))
-            {
-                ButtonManager.instance.settingUI.SetActive(true);
-            }
+            ButtonManager.instance.settingUI.SetActive(true);
         }
+
     }
 }
