@@ -300,6 +300,7 @@ public class Right_Controller_KSH_Photon : MonoBehaviour
 
     void CatchObj()
     {
+
         isClick = true;
         SelectObj = null;
         //레이를 발사하여
