@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 
 public class ConnectManager : MonoBehaviourPunCallbacks
+
 {
     public string gameVersion = "1";
     public InputField nickname;
@@ -29,6 +30,8 @@ public class ConnectManager : MonoBehaviourPunCallbacks
         //    Debug.LogWarning("아이디를 입력하세요.");
         //}
 
+        PhotonNetwork.SendRate = 60;
+        PhotonNetwork.SerializationRate = 60;
         PhotonNetwork.GameVersion = gameVersion;
         PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.ConnectUsingSettings();

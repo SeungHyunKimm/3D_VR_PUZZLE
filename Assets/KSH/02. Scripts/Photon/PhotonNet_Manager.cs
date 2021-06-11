@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class PhotonNet_Manager : MonoBehaviourPunCallbacks
+public class PhotonNet_Manager : MonoBehaviourPun
 {
     void Start()
     {

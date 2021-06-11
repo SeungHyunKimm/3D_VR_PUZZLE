@@ -69,12 +69,11 @@ public class Photon_PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
             Vector3 jsR = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
             transform.Rotate(0, jsR.x * RotationSpeed * Time.deltaTime, 0);
 
-
-            LTouchControl();
+            if(PhotonNetwork.IsMasterClient)  LTouchControl();
 
         }
 
-        else
+        else 
         {
             transform.position = Vector3.Lerp(transform.position, otherPos, 0.2f);
             transform.rotation = Quaternion.Lerp(transform.rotation, otherRot, 0.2f);
@@ -86,22 +85,22 @@ public class Photon_PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
     {
         //로비씬에서 키보드 UI부르는 셋팅
         //L Controller의 X 버튼을 누르면 키보드 UI가 나오게끔 설정하자.
-        if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
-        {
-            //키보드 UI 나타내기
-            qwertyKey.SetActive(true);
-            //버튼 입력 횟수
-            buttonCnt++;
-        }
+        //if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
+        //{
+        //    //키보드 UI 나타내기
+        //    qwertyKey.SetActive(true);
+        //    //버튼 입력 횟수
+        //    buttonCnt++;
+        //}
 
-        if (buttonCnt == 2)
-        {
-            //키보드 UI 없애고
-            qwertyKey.SetActive(false);
-            //버튼 횟수 초기화하자
-            buttonCnt = 0;
+        //if (buttonCnt == 2)
+        //{
+        //    //키보드 UI 없애고
+        //    qwertyKey.SetActive(false);
+        //    //버튼 횟수 초기화하자
+        //    buttonCnt = 0;
 
-        }
+        //}
 
 
         if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch))
