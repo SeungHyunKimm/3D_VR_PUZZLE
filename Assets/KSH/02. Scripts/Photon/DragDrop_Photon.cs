@@ -97,15 +97,11 @@ public class DragDrop_Photon : MonoBehaviourPun
             isClick = false;
             isTrigger = false;
 
-
-
             //정답확인용 카운트
             photonView.RPC("RPC_CheckQuestion", RpcTarget.All , jigsPuz[jigsIndex].CheckCount() == true);
 
-
             //만약에 사용자가 제대로 맞춘 퍼즐을 다시 옮겼다가 놓으면 카운트가 추가로 세어진다.
             //이걸 막으려면 어떻게 해야 할까?
-            
 
             photonView.RPC("RPC_ClearUI", RpcTarget.All);
 
