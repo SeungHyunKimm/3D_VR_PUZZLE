@@ -86,6 +86,7 @@ public class Right_Controller : MonoBehaviour
             PuzzleControl();
         }
     }
+
     void PuzzleControl()
     {
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B ¹öÆ°
