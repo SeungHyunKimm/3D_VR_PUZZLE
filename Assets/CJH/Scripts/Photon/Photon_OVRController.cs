@@ -67,6 +67,7 @@ public class Photon_OVRController : MonoBehaviourPun, IPunObservable
 
     private void Awake()
     {
+        syncData = new SyncData[myBody.Length];
         //Hierarchy상의 퍼즐을 찾아 puzzles 배열에 담기
         GameObject puz = GameObject.Find("Puzzle");             
         puzzles = new GameObject[puz.transform.childCount];
@@ -108,8 +109,8 @@ public class Photon_OVRController : MonoBehaviourPun, IPunObservable
         canvasIndex = 0;
         if (photonView.IsMine)
         {
-            for (int i = 0; i < cv.Length; i++)
-                cv[i].SetPuzzlePosition();
+            for (int i = 0; i < cv.Length; i++) { }
+                //cv[i].SetPuzzlePosition();
         }
     }
 
