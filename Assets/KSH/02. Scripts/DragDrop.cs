@@ -54,12 +54,9 @@ public class DragDrop : MonoBehaviour
             selectedPiece = null;
             if (Physics.Raycast(ray, out hit, 100))
             {
-
-                isClick = true;
                 print(hit.transform.gameObject);
                 selectedPiece = hit.transform.gameObject;
-                //for (int i = 0; i < 36; i++)
-                //{
+                isClick = true;
                 int layer = 1 << LayerMask.NameToLayer("Puzzle");
                 if (Physics.Raycast(ray, out hit, 100, layer))
                 {
@@ -69,6 +66,8 @@ public class DragDrop : MonoBehaviour
                     selectedPiece.transform.position = new Vector3(hit.point.x, hit.point.y, -0.1f); //<=트리거 당긴 넘의 z축을 이동하지 않게 하고 싶다.
                     isTrigger = true;
                 }
+                //for (int i = 0; i < 36; i++)
+                //{
                 //}
             }
         }

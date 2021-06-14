@@ -26,6 +26,8 @@ public class Right_Controller : MonoBehaviour
     bool isClick;
     //스타트캔버스
     public GameObject StartCanvas;
+    //도움말
+    public GameObject ReadmeUI;
     //행성들
     public GameObject Star;
     //스타트 화면을 놓을 변수
@@ -223,6 +225,9 @@ public class Right_Controller : MonoBehaviour
         }
     }
 
+
+    //LTouch Y버튼 누름 횟수
+    int LTouch_Y_buttoncnt = 0;
     void OnClickButtonUI() //승현 StartScene에서 사용할 함수 - 버튼 누를 시 다음 씬 전환
     {
         ray = new Ray(transform.position, transform.forward);
@@ -270,6 +275,16 @@ public class Right_Controller : MonoBehaviour
                     StartCanvas.SetActive(true);
                     StartCanvas.transform.position = Scene_Start.transform.position;
                 }
+            }
+        }
+        if(OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch))
+        {
+            ReadmeUI.SetActive(true);
+            LTouch_Y_buttoncnt++;
+            if(LTouch_Y_buttoncnt == 2)
+            {
+                ReadmeUI.SetActive(false);
+                LTouch_Y_buttoncnt = 0;
             }
         }
     }
