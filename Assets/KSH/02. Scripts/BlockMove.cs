@@ -26,10 +26,12 @@ public class BlockMove : MonoBehaviour
     RaycastHit hit;
 
 
+    AudioSource btnSound;
+
     void Start()
     {
 
-
+        btnSound = GetComponent<AudioSource>();
         SetGrid();
 
     }
@@ -94,6 +96,7 @@ public class BlockMove : MonoBehaviour
                     Position1 = hit.transform.gameObject;
                     Position1.transform.position = new Vector3(Position1.transform.position.x, Position1.transform.position.y, -1);
                     cnt++;
+                    btnSound.Play();
                 }
                 else if (cnt == 1)
                 {
@@ -105,6 +108,7 @@ public class BlockMove : MonoBehaviour
                     Position1 = null;
                     Position2 = null;
                     cnt = 0;
+                    btnSound.Play();
                 }
             }
         }

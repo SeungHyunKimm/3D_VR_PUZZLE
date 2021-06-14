@@ -70,26 +70,25 @@ public class DragDrop_Photon : MonoBehaviourPun
                     isClick = true;
 
                     //정답확인용 카운트(마이너스)
-                    photonView.RPC("RPC_CheckMinusQuestion", RpcTarget.All , jigsPuz[jigsIndex].Checkdist() == 0);
+                    photonView.RPC("RPC_CheckMinusQuestion", RpcTarget.All, jigsPuz[jigsIndex].Checkdist() == 0);
                 }
 
-                //for (int i = 0; i < 36; i++)
+
+                int layer = 1 << LayerMask.NameToLayer("Puzzle");
+                if (Physics.Raycast(ray, out hit, 100, layer))
                 {
-                    int layer = 1 << LayerMask.NameToLayer("Puzzle");
-                    if (Physics.Raycast(ray, out hit, 100, layer))
-                    {
-                        float x = hit.point.x;
-                        float y = hit.point.y;
-                        //print(selectedPiece);
-                        //마우스 우클릭을 했을때 
-                        //클릭한 놈의 GameObject를 움직일 수 있게 하자
-                        //selectedPiece = hit.transform.gameObject;
-                        //selectedPiece.transform.position = new Vector3(hit.point.x, hit.point.y, -0.1f); //<=트리거 당긴 넘의 z축을 이동하지 않게 하고 싶다.
-                        photonView.RPC("RPC_DragPuzzle", RpcTarget.All, x, y, jigsIndex);
-                        isTrigger = true;
+                    float x = hit.point.x;
+                    float y = hit.point.y;
+                    //print(selectedPiece);
+                    //마우스 우클릭을 했을때 
+                    //클릭한 놈의 GameObject를 움직일 수 있게 하자
+                    //selectedPiece = hit.transform.gameObject;
+                    //selectedPiece.transform.position = new Vector3(hit.point.x, hit.point.y, -0.1f); //<=트리거 당긴 넘의 z축을 이동하지 않게 하고 싶다.
+                    photonView.RPC("RPC_DragPuzzle", RpcTarget.All, x, y, jigsIndex);
+                    isTrigger = true;
 
-                    }
                 }
+
             }
         }
 

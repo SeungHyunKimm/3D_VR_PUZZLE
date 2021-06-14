@@ -25,13 +25,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
     public void CreateRoom()
     {
-
         RoomOptions roomOption = new RoomOptions();
         roomOption.MaxPlayers = 2;
         PhotonNetwork.JoinOrCreateRoom("辫铰泅", roomOption, TypedLobby.Default);
         print("规 积己 己傍!");
         //PhotonNetwork.JoinRandomRoom();
     }
+
     public override void OnCreatedRoom()
     {
 
@@ -45,8 +45,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         print("JoinRoom is completed");
         print(PhotonNetwork.CurrentRoom.Name);
         PhotonNetwork.JoinRoom("辫铰泅");
-        
+
     }
+
     public override void OnJoinedRoom()
     {
         print("规 立加 己傍");

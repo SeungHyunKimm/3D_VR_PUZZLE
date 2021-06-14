@@ -20,6 +20,7 @@ public class Right_Controller : MonoBehaviour
     EffectSettings es;
 
 
+
     GameObject SelectObj; // 선택한 놈 (승현)
     //클릭한 상태
     bool isClick;
@@ -29,15 +30,22 @@ public class Right_Controller : MonoBehaviour
     public GameObject Star;
     //스타트 화면을 놓을 변수
     public GameObject Scene_Start;
+    //효과음
+    AudioSource EffSound;
+    //폭팔효과
+    public GameObject ExplosionObj;
+    //버튼 누름 효과음
+    AudioSource btnSound;
+
 
 
     void Start()
     {
 
-
         lr = GetComponent<LineRenderer>();
         es = shot.GetComponent<EffectSettings>();
-
+        EffSound = GetComponent<AudioSource>(); //효과음
+        btnSound = GetComponent<AudioSource>();
 
     }
 
@@ -253,6 +261,10 @@ public class Right_Controller : MonoBehaviour
             {
                 if (hit.transform.gameObject.name.Contains("Saturn"))
                 {
+                    //효과음 재생
+                    EffSound.Play();
+                    //폭팔효과 재생
+                    ExplosionObj.SetActive(true);
                     //행성들 다 사라지게 한다.
                     Star.SetActive(false);
                     StartCanvas.SetActive(true);
@@ -314,18 +326,22 @@ public class Right_Controller : MonoBehaviour
             {
                 if (hit.transform.gameObject.name.Contains("Resume"))
                 {
+                    btnSound.Play();
                     ButtonManager.instance.OnClickResume();
                 }
                 if (hit.transform.gameObject.name.Contains("Retry"))
                 {
+                    btnSound.Play();
                     ButtonManager.instance.OnClickRetry();
                 }
                 if (hit.transform.gameObject.name.Contains("SelectMenu"))
                 {
+                    btnSound.Play();
                     ButtonManager.instance.OnClickSelectMenu();
                 }
                 if (hit.transform.gameObject.name.Contains("ExitGame"))
                 {
+                    btnSound.Play();
                     ButtonManager.instance.OnClickExitGame();
                 }
                 return;
@@ -371,6 +387,7 @@ public class Right_Controller : MonoBehaviour
                 //B번 물체
                 print("rotate complete");
                 hit.transform.Rotate(0, 0, 90);
+                btnSound.Play();
             }
         }
 
@@ -380,18 +397,22 @@ public class Right_Controller : MonoBehaviour
         {
             if (hit.transform.gameObject.name.Contains("Resume"))
             {
+                btnSound.Play();
                 ButtonManager.instance.OnClickResume();
             }
             if (hit.transform.gameObject.name.Contains("Retry"))
             {
+                btnSound.Play();
                 ButtonManager.instance.OnClickRetry();
             }
             if (hit.transform.gameObject.name.Contains("SelectMenu"))
             {
+                btnSound.Play();
                 ButtonManager.instance.OnClickSelectMenu();
             }
             if (hit.transform.gameObject.name.Contains("ExitGame"))
             {
+                btnSound.Play();
                 ButtonManager.instance.OnClickExitGame();
             }
             return;

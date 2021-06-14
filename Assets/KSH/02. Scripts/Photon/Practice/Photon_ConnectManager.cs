@@ -172,6 +172,4 @@ public class Photon_ConnectManager : MonoBehaviourPunCallbacks
 
     }
 
-
-
 }
