@@ -38,7 +38,7 @@ public class NetManager : MonoBehaviourPunCallbacks
     {
         base.OnJoinedRoom();
         print("OnJoinedRoom");
-        PhotonNetwork.Instantiate("Player", new Vector3(5, 5, 5) , new Quaternion(0,180,0,1));
+        PhotonNetwork.Instantiate("Player", new Vector3(5, 5, 10) , new Quaternion(0, 180 , 0 , 1));
     }
 
 }
