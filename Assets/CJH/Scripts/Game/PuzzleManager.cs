@@ -47,7 +47,7 @@ public class PuzzleManager : MonoBehaviourPun//, IPunObservable
 
     void Start()
     {
-        AI = GameObject.Find("AIPlayer").GetComponent<PC_AIPlayerControl>();
+        //AI = GameObject.Find("AIPlayer").GetComponent<PC_AIPlayerControl>();
         xyz = new float[3];
         center = new Vector3(5, 5, 0.5f);
     }
