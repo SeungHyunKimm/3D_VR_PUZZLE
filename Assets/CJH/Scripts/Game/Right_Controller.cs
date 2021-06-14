@@ -20,22 +20,34 @@ public class Right_Controller : MonoBehaviour
     EffectSettings es;
 
 
+
     GameObject SelectObj; // 선택한 놈 (승현)
     //클릭한 상태
     bool isClick;
     //스타트캔버스
     public GameObject StartCanvas;
+    //도움말
+    public GameObject ReadmeUI;
     //행성들
     public GameObject Star;
     //스타트 화면을 놓을 변수
     public GameObject Scene_Start;
+    //효과음
+    AudioSource EffSound;
+    //폭팔효과
+    public GameObject ExplosionObj;
+    //버튼 누름 효과음
+    AudioSource btnSound;
+
 
 
     void Start()
     {
+
         lr = GetComponent<LineRenderer>();
         es = shot.GetComponent<EffectSettings>();
-
+        EffSound = GetComponent<AudioSource>(); //효과음
+        btnSound = GetComponent<AudioSource>();
 
     }
 
@@ -74,6 +86,7 @@ public class Right_Controller : MonoBehaviour
             PuzzleControl();
         }
     }
+
     void PuzzleControl()
     {
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch); //B 버튼
@@ -213,6 +226,9 @@ public class Right_Controller : MonoBehaviour
         }
     }
 
+
+    //LTouch Y버튼 누름 횟수
+    int LTouch_Y_buttoncnt = 0;
     void OnClickButtonUI() //승현 StartScene에서 사용할 함수 - 버튼 누를 시 다음 씬 전환
     {
         ray = new Ray(transform.position, transform.forward);
@@ -251,11 +267,25 @@ public class Right_Controller : MonoBehaviour
             {
                 if (hit.transform.gameObject.name.Contains("Saturn"))
                 {
+                    //효과음 재생
+                    EffSound.Play();
+                    //폭팔효과 재생
+                    ExplosionObj.SetActive(true);
                     //행성들 다 사라지게 한다.
                     Star.SetActive(false);
                     StartCanvas.SetActive(true);
                     StartCanvas.transform.position = Scene_Start.transform.position;
                 }
+            }
+        }
+        if(OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch))
+        {
+            ReadmeUI.SetActive(true);
+            LTouch_Y_buttoncnt++;
+            if(LTouch_Y_buttoncnt == 2)
+            {
+                ReadmeUI.SetActive(false);
+                LTouch_Y_buttoncnt = 0;
             }
         }
     }
@@ -312,18 +342,22 @@ public class Right_Controller : MonoBehaviour
             {
                 if (hit.transform.gameObject.name.Contains("Resume"))
                 {
+                    btnSound.Play();
                     ButtonManager.instance.OnClickResume();
                 }
                 if (hit.transform.gameObject.name.Contains("Retry"))
                 {
+                    btnSound.Play();
                     ButtonManager.instance.OnClickRetry();
                 }
                 if (hit.transform.gameObject.name.Contains("SelectMenu"))
                 {
+                    btnSound.Play();
                     ButtonManager.instance.OnClickSelectMenu();
                 }
                 if (hit.transform.gameObject.name.Contains("ExitGame"))
                 {
+                    btnSound.Play();
                     ButtonManager.instance.OnClickExitGame();
                 }
                 return;
@@ -369,6 +403,7 @@ public class Right_Controller : MonoBehaviour
                 //B번 물체
                 print("rotate complete");
                 hit.transform.Rotate(0, 0, 90);
+                btnSound.Play();
             }
         }
 
@@ -378,18 +413,22 @@ public class Right_Controller : MonoBehaviour
         {
             if (hit.transform.gameObject.name.Contains("Resume"))
             {
+                btnSound.Play();
                 ButtonManager.instance.OnClickResume();
             }
             if (hit.transform.gameObject.name.Contains("Retry"))
             {
+                btnSound.Play();
                 ButtonManager.instance.OnClickRetry();
             }
             if (hit.transform.gameObject.name.Contains("SelectMenu"))
             {
+                btnSound.Play();
                 ButtonManager.instance.OnClickSelectMenu();
             }
             if (hit.transform.gameObject.name.Contains("ExitGame"))
             {
+                btnSound.Play();
                 ButtonManager.instance.OnClickExitGame();
             }
             return;
@@ -424,4 +463,6 @@ public class Right_Controller : MonoBehaviour
         //조이스틱 오른쪽 + 던지는 힘 = 블록을 앞으로 던지게끔 효과를 내보자
         rb.velocity = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch) * throwPower;
     }
+
+
 }

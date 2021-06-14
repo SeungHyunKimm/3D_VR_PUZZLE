@@ -10,12 +10,14 @@ public class DragDrop : MonoBehaviour
     RaycastHit hit;
     LineRenderer lr;
     JigsawPuzzle jp;
+    AudioSource btnSound;
 
     void Start()
     {
 
         lr = GetComponent<LineRenderer>();
         jp = GameObject.Find("JigsawPuzzle").GetComponent<JigsawPuzzle>();
+        btnSound = GetComponent<AudioSource>();
 
     }
 
@@ -48,33 +50,35 @@ public class DragDrop : MonoBehaviour
         float v = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
         if (v > 0)
         {
-            isClick = true;
-            //selectedPiece = null;
+
+            selectedPiece = null;
             if (Physics.Raycast(ray, out hit, 100))
             {
                 print(hit.transform.gameObject);
                 selectedPiece = hit.transform.gameObject;
-                for (int i = 0; i < 36; i++)
+                isClick = true;
+                int layer = 1 << LayerMask.NameToLayer("Puzzle");
+                if (Physics.Raycast(ray, out hit, 100, layer))
                 {
-                    int layer = 1 << LayerMask.NameToLayer("Puzzle");
-                    if (Physics.Raycast(ray, out hit, 100, layer))
-                    {
-                        //print(selectedPiece);
-                        //마우스 우클릭을 했을때 
-                        //클릭한 놈의 GameObject를 움직일 수 있게 하자
-                        selectedPiece.transform.position = new Vector3(hit.point.x, hit.point.y, -0.1f); //<=트리거 당긴 넘의 z축을 이동하지 않게 하고 싶다.
-                        isTrigger = true;
-                    }
+                    //print(selectedPiece);
+                    //마우스 우클릭을 했을때 
+                    //클릭한 놈의 GameObject를 움직일 수 있게 하자
+                    selectedPiece.transform.position = new Vector3(hit.point.x, hit.point.y, -0.1f); //<=트리거 당긴 넘의 z축을 이동하지 않게 하고 싶다.
+                    isTrigger = true;
                 }
+                //for (int i = 0; i < 36; i++)
+                //{
+                //}
             }
         }
+
         else if (isTrigger == true && v <= 0)
         {
             isClick = false;
             jp.DragSign();
             isTrigger = false;
             print("dㄴㄴ");
-
+            btnSound.Play();
         }
 
 

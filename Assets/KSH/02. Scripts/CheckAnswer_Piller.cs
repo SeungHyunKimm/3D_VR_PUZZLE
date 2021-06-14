@@ -12,13 +12,13 @@ public class CheckAnswer_Piller : MonoBehaviour
 
     public string BlockName;
     public Slider sliderName;
-
+    public GameObject ClearUI;
     void Start()
     {
 
         GameObject bk = GameObject.Find("BlockManager");
         ga = bk.GetComponent<BlockManager>();
-        //GetComponent<BlockState_Manager>();
+        
         
 
     }
@@ -45,6 +45,7 @@ public class CheckAnswer_Piller : MonoBehaviour
             {
                 print("모두 정답입니다.");
                 //100개의 블록이 모두 위치하게 되면 완성되었다는 UI를 만든다.
+                ClearUI.SetActive(true);
             }
         }
     }
