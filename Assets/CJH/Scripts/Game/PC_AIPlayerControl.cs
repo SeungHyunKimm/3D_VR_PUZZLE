@@ -30,7 +30,8 @@ public class PC_AIPlayerControl : MonoBehaviour
         Search,
         Choice,
         PreView,
-        Control
+        Control,
+        End
     }
 
     public AIPlayerState state;
@@ -165,7 +166,7 @@ public class PC_AIPlayerControl : MonoBehaviour
                 {
                     pz.transform.position = new Vector3(0, 20, 0);
                     pz.state = PuzzleManager.PuzzleState.Revolution;
-                    print("전환");
+                    return;
                 }
             }
         }
@@ -177,7 +178,7 @@ public class PC_AIPlayerControl : MonoBehaviour
             int y = Mathf.RoundToInt(preView[preViewIndex].transform.GetChild(i).position.y);
             if (x >= 0 && x < width && y >= 0 && y < height)
             {
-                if (!quad[x, y]/* && !pr.puzzlePos[x, y]*/)    //캔퍼스 상에서 쿼드가 아니며 그 퍼즐을 한 번 두었던 곳이라면 
+                if (!quad[x, y])    //캔퍼스 상에서 쿼드가 아니며 그 퍼즐을 한 번 두었던 곳이라면 
                     return;                                //리턴
             }
         }
@@ -267,6 +268,7 @@ public class PC_AIPlayerControl : MonoBehaviour
 
     void ChoicePuzzle(int i)
     {
+        if (puzzles[i].state == PuzzleManager.PuzzleState.Clear) return;
         if (preView[preViewIndex].name != puzzles[i].name && pr != null)
         {
             if (pr.state == PuzzleManager.PuzzleState.Catch || pr.state == PuzzleManager.PuzzleState.Control)

@@ -18,7 +18,6 @@ public class PuzzleManager : MonoBehaviourPun//, IPunObservable
     PC_AIPlayerControl AI;
     int width = 11, height = 11;
     public bool[,] puzzlePos;
-
     public enum PuzzleState
     {
         Revolution,           //공전 상태
@@ -29,20 +28,13 @@ public class PuzzleManager : MonoBehaviourPun//, IPunObservable
         Clear
     }
 
-    enum PuzzleRot
-    {
-        Set,                   //월드 각도 세팅
-        Change                 //프리 뷰의 각도로 변경
-    }
-
     public PuzzleState state;
-    PuzzleRot state2;
+
     // Start is called before the first frame update
     private void Awake()
     {
         rigid = GetComponent<Rigidbody>();
         box = GetComponent<BoxCollider>();
-        puzzlePos = new bool[width, height];
     }
 
     void Start()
@@ -50,6 +42,7 @@ public class PuzzleManager : MonoBehaviourPun//, IPunObservable
         AI = GameObject.Find("AIPlayer").GetComponent<PC_AIPlayerControl>();
         xyz = new float[3];
         center = new Vector3(5, 5, 0.5f);
+        puzzlePos = new bool[width, height];
     }
 
     //Update is called once per frame
@@ -62,21 +55,21 @@ public class PuzzleManager : MonoBehaviourPun//, IPunObservable
     {
         //if (PhotonNetwork.IsMasterClient)
         //{
-            switch (state)
-            {
-                case PuzzleState.Revolution:
-                    Revolution();
-                    break;
-                case PuzzleState.Control:
-                    Control();
-                    break;
-                case PuzzleState.Fusion:
-                    Fusion();
-                    break;
-                case PuzzleState.Catch:
-                    Catch();
-                    break;
-            }
+        switch (state)
+        {
+            case PuzzleState.Revolution:
+                Revolution();
+                break;
+            case PuzzleState.Control:
+                Control();
+                break;
+            case PuzzleState.Fusion:
+                Fusion();
+                break;
+            case PuzzleState.Catch:
+                Catch();
+                break;
+        }
         //}
     }
 
@@ -144,26 +137,29 @@ public class PuzzleManager : MonoBehaviourPun//, IPunObservable
             int x = Mathf.RoundToInt(transform.GetChild(i).position.x);
             int y = Mathf.RoundToInt(transform.GetChild(i).position.y);
             if (x >= 0 && x < width && y >= 0 && y < height)
-            {
                 puzzlePos[x, y] = true;
-                //AI.quad[x, y] = false;
-            }
         }
         rigid.isKinematic = true;
     }
 
-    public void Fixed2(int x , int y)
+    public void Clear()
     {
-        puzzlePos[x, y] = false; //원래 퍼즐 위치라면 겹치는 위치였어도 다시 놓을 수 있게
-        //AI.quad[x, y] = true;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            int x = Mathf.RoundToInt(transform.GetChild(i).position.x);
+            int y = Mathf.RoundToInt(transform.GetChild(i).position.y);
+            if (x >= 0 && x < width && y >= 0 && y < height)
+                AI.quad[x, y] = false;
+        }
+        rigid.isKinematic = true;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (state == PuzzleState.Clear || state == PuzzleState.Fixed) return;
+        if (collision.gameObject.layer != LayerMask.NameToLayer("Puzzle")) return;
         PuzzleManager pr = collision.transform.GetComponent<PuzzleManager>();
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Puzzle") && pr.state != PuzzleManager.PuzzleState.Clear && state != PuzzleState.Clear)
-        {
-                pr.state = PuzzleState.Revolution;
-        }
+        if (pr.state != PuzzleManager.PuzzleState.Clear)
+            state = PuzzleState.Revolution;
     }
 }

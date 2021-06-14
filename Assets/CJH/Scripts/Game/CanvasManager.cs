@@ -13,6 +13,7 @@ public class CanvasManager : MonoBehaviourPun//, IPunObservable
     public bool[] checkpuzz;    //퍼즐들이 원래 위치에 위치하고 있는지 알아내는 여부
     Material pz, qd;            //퍼즐과 쿼드의 Material
     PuzzleManager pr;
+    PC_AIPlayerControl AI;
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +35,8 @@ public class CanvasManager : MonoBehaviourPun//, IPunObservable
                 CheckBox(collision.gameObject);
                 if (GameClear())                                     //퍼즐을 다맞추었을 때 효과 발생 및 게임 종료
                 {
+                    AI = GameObject.Find("AIPlayer").GetComponent<PC_AIPlayerControl>();
+                    AI.state = PC_AIPlayerControl.AIPlayerState.End;
                     PhotonNetwork.Instantiate("BlackHole", transform.position, Quaternion.identity);
                 }
             }
@@ -68,21 +71,16 @@ public class CanvasManager : MonoBehaviourPun//, IPunObservable
                     return;
                 }
                 else if (grid[positionX, positionY].name == puzz.transform.GetChild(i).name)    //퍼즐의 이름과 그리드 값이 일치하면 색바꿈
-                {
                     qd.color = pz.color;                    //원래 퍼즐 위치라면 쿼드를 퍼즐 색상으로 변경 
-                }
             }
         }
         //Absorb(puzz);
         pr.state = PuzzleManager.PuzzleState.Clear;
+        print(pr.state);
+        pr.Clear();
         pr.GetComponent<Rigidbody>().isKinematic = true;
         checkpuzz[index] = true;                     //끼워진 퍼즐이 캔퍼스와 틀에서 위치와 같으면 true 체크
         //pz.SetColor("_EmissionColor", pz.color * 10);
-    }
-
-    void Boom()
-    {
-
     }
 
     void Absorb(GameObject pz)
@@ -125,8 +123,8 @@ public class CanvasManager : MonoBehaviourPun//, IPunObservable
         int k = 0;
         while (k < length)
         {
-            int x = Random.Range(1, width - 1);
-            int y = Random.Range(1, height - 1);
+            int x = Random.Range(1, width);
+            int y = Random.Range(1, height);
             int index = x + (height * y);                 //Canvas 의 자식 Quad들의 인덱스 접근
             if (CheckGrid(k, index)) continue;            //퍼즐들의 위치 중복 제거
             photonView.RPC("SetQuadColor", RpcTarget.AllBuffered, x, y, k, index);   //모든 PC에 퍼즐 틀 위치 전해주기
@@ -163,9 +161,9 @@ public class CanvasManager : MonoBehaviourPun//, IPunObservable
                 int positionindex = positionX + (height * positionY);                      //쿼드와 퍼즐이 겹치는 부분을 재조정
                 quad[positionindex].SetActive(true);
                 grid[positionX, positionY] = puzzle[k].transform.GetChild(i);
-                qd = quad[positionindex].GetComponent<MeshRenderer>().material; //쿼드의 색상 변경
-                pz = puzzle[k].transform.GetComponent<MeshRenderer>().material;
-                qd.color = pz.color;
+                //qd = quad[positionindex].GetComponent<MeshRenderer>().material; //쿼드의 색상 변경
+                //pz = puzzle[k].transform.GetComponent<MeshRenderer>().material;
+                //qd.color = pz.color;
             }
         }
     }
