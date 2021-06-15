@@ -132,13 +132,7 @@ public class PuzzleManager : MonoBehaviourPun//, IPunObservable
 
     public void Fixed()
     {
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            int x = Mathf.RoundToInt(transform.GetChild(i).position.x);
-            int y = Mathf.RoundToInt(transform.GetChild(i).position.y);
-            if (x >= 0 && x < width && y >= 0 && y < height)
-                puzzlePos[x, y] = true;
-        }
+        puzzlePos[(int)transform.position.x, (int)transform.position.y] = true;
         rigid.isKinematic = true;
     }
 

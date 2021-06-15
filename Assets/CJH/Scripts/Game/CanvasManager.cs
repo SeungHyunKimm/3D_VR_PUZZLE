@@ -32,6 +32,7 @@ public class CanvasManager : MonoBehaviourPun//, IPunObservable
             if (pr.state == PuzzleManager.PuzzleState.Fusion)
             {
                 pr.state = PuzzleManager.PuzzleState.Fixed;
+                pr.Fixed();
                 CheckBox(collision.gameObject);
                 if (GameClear())                                     //퍼즐을 다맞추었을 때 효과 발생 및 게임 종료
                 {
@@ -40,7 +41,7 @@ public class CanvasManager : MonoBehaviourPun//, IPunObservable
                     PhotonNetwork.Instantiate("BlackHole", transform.position, Quaternion.identity);
                 }
             }
-            else if (pr.state != PuzzleManager.PuzzleState.Clear)                                         //튕겨내기
+            else if (pr.state != PuzzleManager.PuzzleState.Fixed)                                         //튕겨내기
             {
                 if (PhotonNetwork.IsMasterClient) Collision(collision.gameObject);
                 pr.state = PuzzleManager.PuzzleState.Revolution;
@@ -76,7 +77,7 @@ public class CanvasManager : MonoBehaviourPun//, IPunObservable
         }
         //Absorb(puzz);
         pr.state = PuzzleManager.PuzzleState.Clear;
-        print(pr.state);
+        //print(pr.state);
         pr.Clear();
         pr.GetComponent<Rigidbody>().isKinematic = true;
         checkpuzz[index] = true;                     //끼워진 퍼즐이 캔퍼스와 틀에서 위치와 같으면 true 체크

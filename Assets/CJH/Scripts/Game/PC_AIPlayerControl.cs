@@ -108,7 +108,7 @@ public class PC_AIPlayerControl : MonoBehaviour
     void SearchQuad()
     {
         if (transform.position.x * transform.position.y < (width - 1) * (height - 1))
-            MoveXY();
+            MoveXY(width , -1 , height , -1);
         else
             state = AIPlayerState.Choice;
 
@@ -119,20 +119,30 @@ public class PC_AIPlayerControl : MonoBehaviour
             if (hit.transform.name == "Quad")
             {
                 if (!quad[(int)hit.point.x, (int)hit.point.y])
+                {
+                    int x = (int)hit.point.x;
+                    int y = (int)hit.point.y;
+                    if (x >= Max_width) Max_width = x;
+                    if (x < Min_width) Min_width = x;
+                    if (y >= Max_height) Max_height = y;
+                    if (y < Min_height) Max_height = y;
                     quad[(int)hit.point.x, (int)hit.point.y] = true;
+                }
             }
         }
     }
 
-    void MoveXY()    //탐색 시작 지점을 (0 , 0)으로 지정
+    int Max_width = -1, Max_height = -1;
+    int Min_width = 11 , Min_height = 11;
+    void MoveXY(int Max_w , int Min_w , int Max_h , int Min_h)    //탐색 시작 지점을 (0 , 0)으로 지정
     {
         transform.position += Vector3.up * moveY;
-        if (transform.position.y == height || transform.position.y == -1)    //판의 y축 맨 밑 혹은 맨 위일 때 오른쪽으로 한 칸 이동.
+        if (transform.position.y == Max_h || transform.position.y == Min_h)    //판의 y축 맨 밑 혹은 맨 위일 때 오른쪽으로 한 칸 이동.
         {
             transform.position -= Vector3.up * moveY;
             moveY *= -1;
             transform.position += Vector3.right * moveX;
-            if (transform.position.x == width || transform.position.x == -1)
+            if (transform.position.x == Max_w || transform.position.x == Min_w)
             {
                 transform.position -= Vector3.right * moveX;
                 moveX *= -1;
@@ -155,7 +165,9 @@ public class PC_AIPlayerControl : MonoBehaviour
             currtime = 0;
         else
             return;
-        MoveXY();
+        //MoveXY(Max_width , Min_width , Max_height , Min_height);
+        MoveXY(width, -1, height, -1);
+
         ray = new Ray(transform.position, transform.forward);
         if (Physics.Raycast(ray, out hit))
         {
@@ -170,7 +182,14 @@ public class PC_AIPlayerControl : MonoBehaviour
                 }
             }
         }
+        
         PreViewStay((int)transform.position.x, (int)transform.position.y);
+        if (pr.puzzlePos[(int)transform.position.x, (int)transform.position.y])
+        {
+            print(pr.name + "  위치 중복");
+            return;
+        }
+
 
         for (int i = 0; i < preView[preViewIndex].transform.childCount; i++)
         {
@@ -178,8 +197,8 @@ public class PC_AIPlayerControl : MonoBehaviour
             int y = Mathf.RoundToInt(preView[preViewIndex].transform.GetChild(i).position.y);
             if (x >= 0 && x < width && y >= 0 && y < height)
             {
-                if (!quad[x, y])    //캔퍼스 상에서 쿼드가 아니며 그 퍼즐을 한 번 두었던 곳이라면 
-                    return;                                //리턴
+                if (!quad[x , y])    //캔퍼스 상에서 쿼드가 아니며 그 퍼즐을 한 번 두었던 곳이라면 
+                    return;                              //리턴
             }
         }
         state = AIPlayerState.Control;
