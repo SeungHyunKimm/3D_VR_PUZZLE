@@ -173,9 +173,9 @@ public class CanvasManager : MonoBehaviourPun//, IPunObservable
                 int positionindex = positionX + (height * positionY);                      //쿼드와 퍼즐이 겹치는 부분을 재조정
                 quad[positionindex].SetActive(true);
                 grid[positionX, positionY] = puzzle[k].transform.GetChild(i);
-                qd = quad[positionindex].GetComponent<MeshRenderer>().material; //쿼드의 색상 변경
-                pz = puzzle[k].transform.GetComponent<MeshRenderer>().material;
-                qd.color = pz.color;
+            //    qd = quad[positionindex].GetComponent<MeshRenderer>().material; //쿼드의 색상 변경
+            //    pz = puzzle[k].transform.GetComponent<MeshRenderer>().material;
+            //    qd.color = pz.color;
             }
         }
     }
