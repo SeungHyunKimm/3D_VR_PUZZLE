@@ -14,6 +14,7 @@ public class PuzzleManager : MonoBehaviourPun//, IPunObservable
     float rvSpeed;            //공전 스피드
     float[] xyz;               //물체의 각도 값
     float pre_z;
+    public int puzzleIndex;
 
     PC_AIPlayerControl AI;
     int width = 11, height = 11;
@@ -39,7 +40,7 @@ public class PuzzleManager : MonoBehaviourPun//, IPunObservable
 
     void Start()
     {
-        AI = GameObject.Find("AIPlayer").GetComponent<PC_AIPlayerControl>();
+        //AI = GameObject.Find("AIPlayer").GetComponent<PC_AIPlayerControl>();
         xyz = new float[3];
         center = new Vector3(5, 5, 0.5f);
         puzzlePos = new bool[width, height];
@@ -142,8 +143,8 @@ public class PuzzleManager : MonoBehaviourPun//, IPunObservable
         {
             int x = Mathf.RoundToInt(transform.GetChild(i).position.x);
             int y = Mathf.RoundToInt(transform.GetChild(i).position.y);
-            if (x >= 0 && x < width && y >= 0 && y < height)
-                AI.quad[x, y] = false;
+            if (x >= 0 && x < width && y >= 0 && y < height) { }
+                //AI.quad[x, y] = false;
         }
         rigid.isKinematic = true;
     }

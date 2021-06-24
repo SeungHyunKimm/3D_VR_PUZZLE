@@ -36,16 +36,16 @@ public class CanvasManager : MonoBehaviourPun//, IPunObservable
                 CheckBox(collision.gameObject);
                 if (GameClear())                                     //퍼즐을 다맞추었을 때 효과 발생 및 게임 종료
                 {
-                    AI = GameObject.Find("AIPlayer").GetComponent<PC_AIPlayerControl>();
-                    AI.state = PC_AIPlayerControl.AIPlayerState.End;
-                    PhotonNetwork.Instantiate("BlackHole", transform.position, Quaternion.identity);
+                    //AI = GameObject.Find("AIPlayer").GetComponent<PC_AIPlayerControl>();
+                    //AI.state = PC_AIPlayerControl.AIPlayerState.End;
+                    PhotonNetwork.Instantiate("BlackHole", transform.position , Quaternion.identity);
                 }
             }
-            else if (pr.state != PuzzleManager.PuzzleState.Fixed)                                         //튕겨내기
-            {
-                if (PhotonNetwork.IsMasterClient) Collision(collision.gameObject);
-                pr.state = PuzzleManager.PuzzleState.Revolution;
-            }
+            //else if (pr.state != PuzzleManager.PuzzleState.Fixed)                                         //튕겨내기
+            //{
+            //    if (PhotonNetwork.IsMasterClient) Collision(collision.gameObject);
+            //    pr.state = PuzzleManager.PuzzleState.Revolution;
+            //}
         }
     }
     void Collision(GameObject collision)
@@ -55,7 +55,7 @@ public class CanvasManager : MonoBehaviourPun//, IPunObservable
 
     void CheckBox(GameObject puzz)                                            //퍼즐을 붙였을 때 정답처리 여부
     {
-        int index = GetIndex(puzz);
+        int index = pr.puzzleIndex;
         if (index == puzzle.Length) return;
         for (int i = 0; i < puzz.transform.childCount ; i++)
         {
@@ -153,6 +153,7 @@ public class CanvasManager : MonoBehaviourPun//, IPunObservable
         quad[index].SetActive(true);
         puzzle[k].transform.position = quad[index].transform.position + new Vector3(0, 0, 6);         //퍼즐을 쿼드 좌표에 위치 시키기.
         quad[index].SetActive(false);
+        puzzle[k].puzzleIndex = k;
         for (int i = 0; i < puzzle[k].transform.childCount; i++)
         {
             int positionX = Mathf.RoundToInt(puzzle[k].transform.GetChild(i).position.x);

@@ -102,14 +102,14 @@ public class PC_PlayerControl : MonoBehaviourPun, IPunObservable
         for (int i = 0; i < pre.transform.childCount; i++)
             preView[i] = pre.transform.GetChild(i).gameObject;
 
-        fusionSpeed = 10;
+        fusionSpeed = 25;
 
         control = GameObject.Find("ControlPos");
 
         //StartCoroutine(AIStartAfter_Two());
         GameObject aiGO = GameObject.Find("AIPlayer");
-        AI = aiGO.GetComponent<PC_AIPlayerControl>();
-        AI.enabled = true;
+        //AI = aiGO.GetComponent<PC_AIPlayerControl>();
+        //AI.enabled = true;
     }
 
     IEnumerator AIStartAfter_Two()
@@ -200,7 +200,7 @@ public class PC_PlayerControl : MonoBehaviourPun, IPunObservable
                 //{
                 //    photonView.RPC("Catch", RpcTarget.All, hit.point, pv.ViewID);
                 //}
-                photonView.RPC("Catch", RpcTarget.All, hit.transform.name);
+                photonView.RPC("Catch", RpcTarget.All, hit.transform.GetComponent<PuzzleManager>());
                 //Shot();
                 //PuzzleChoiceChange(hit.transform.gameObject);
             }
@@ -322,12 +322,18 @@ public class PC_PlayerControl : MonoBehaviourPun, IPunObservable
     }
 
     [PunRPC]
-    void Catch(string name)
+    void Catch(PuzzleManager pz)
     {
         //for (int i = 0; i < puzzles.Length; i++)
         //{
         //    if (viewId == puzzles[i].ViewID)
         //    {
+        //preViewIndex = pz.puzzleIndex;
+        //pr = pz;
+        //if (preViewIndex / (puzzles.Length / cv.Length) == playerPreViewIndex)  //자신의 판에 맞는 퍼즐일 때만 체크 퍼즐 호출
+        //    cv[playerPreViewIndex].CatchToCheckBox(preViewIndex % (puzzles.Length / cv.Length));
+        //pr.GetComponent<Rigidbody>().isKinematic = true; //멈추게 만들기
+
         for (int i = 0; i < preView.Length; i++)
         {
             if (preView[i].name == name)     //프리뷰 인덱스 저장 및 Catch상태로 변환 
