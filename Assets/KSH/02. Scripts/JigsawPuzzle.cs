@@ -20,13 +20,6 @@ public class JigsawPuzzle : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-
-
-
-
-    }
 
     public void DragSign()
     {
